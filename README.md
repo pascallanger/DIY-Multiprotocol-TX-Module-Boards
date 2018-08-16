@@ -14,7 +14,7 @@ The board definitions are installed using the Arduino IDE Boards Manager.
 
 3. Locate the **Aditional Boards Manager URLs** field and paste in this URL: 
 
-`https://raw.githubusercontent.com/pascallanger/DIY-Multiprotocol-TX-Module/master/BootLoaders/package_multi_4in1_board_index.json`
+`https://raw.githubusercontent.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/master/package_multi_4in1_board_index.json`
 
 **Note:** Multiple URLs are comma-separated.
 
