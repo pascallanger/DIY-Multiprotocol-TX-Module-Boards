@@ -10,8 +10,8 @@ tar -czf ../archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz --transfo
 sleep 1s
 echo
 echo "Package: package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz"
-echo "SHA256:  `(sha256sum ../Archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=1 '{print $N}')`"
-echo "Size:    `(ls -al ../Archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=5 '{print $N}')`"
+echo "SHA256:  `(sha256sum ../archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=1 '{print $N}')`"
+echo "Size:    `(ls -al ../archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=5 '{print $N}')`"
 echo
 echo "STM Version: $STM_VERSION"
 echo "Creating archive 'package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz'"
@@ -19,7 +19,7 @@ tar -czf ../archives/package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz --trans
 sleep 1s
 echo
 echo "Package: package_multi_4in1_stm_board_v$STM_VERSION.tar.gz"
-echo "SHA256:  `(sha256sum ../Archives/package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz | awk -v N=1 '{print $N}')`"
-echo "Size:    `(ls -al ../Archives/package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz | awk -v N=5 '{print $N}')`"
+echo "SHA256:  `(sha256sum ../archives/package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz | awk -v N=1 '{print $N}')`"
+echo "Size:    `(ls -al ../archives/package_multi_4in1_stm32_board_v$STM_VERSION.tar.gz | awk -v N=5 '{print $N}')`"
 echo
 read -n 1 -p Done
