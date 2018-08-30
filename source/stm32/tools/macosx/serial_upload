@@ -3,4 +3,5 @@ port=$1
 addr=$2
 file=$3
 
-$(dirname $0)/stm32flash/stm32flash -v -g $addr -b 57600 -w "$file" /dev/"$port"
+$(dirname $0)/stm32flash/stm32flash -o -S 0x8000000:129024 -b 57600 /dev/"$port"
+$(dirname $0)/stm32flash/stm32flash -v -e 0 -g $addr -b 57600 -w "$file" /dev/"$port"
