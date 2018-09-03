@@ -31,8 +31,20 @@ if %errorlevel% equ 0 (
 ECHO Attempting to flash module via Maple USB ...
 ECHO java -jar maple_loader.jar %comport% 2 "1EAF:0003" "%fwpath%"
 java -jar maple_loader.jar %comport% 2 "1EAF:0003" "%fwpath%"
+
+REM Delay to wait for the board to reset
+for /l %%x in (1, 1, 40) do (
+  ping -w 50 -n 1 192.0.2.1 > nul
+  mode %1 > nul
+  if ERRORLEVEL 0 (
+    ECHO.
+    ECHO Done.
+    ECHO.
+    GOTO :EOF
+  )
+)
 ECHO.
-ECHO Done.
+ECHO Timeout waiting for %1
 ECHO.
 GOTO :EOF
 
@@ -54,12 +66,12 @@ ECHO.
 ECHO Flashing module via FTDI adapter on %comport%
 ECHO.
 ECHO Erasing ...
-ECHO stm32flash.exe -o -b 115200 %comport%
-stm32flash.exe -o -b 115200 %comport%
+ECHO stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
+stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
 
 ECHO Writing bootloader ...
-ECHO stm32flash.exe -v -g 0x8000000 -b 115200 -w %blpath% %comport%
-stm32flash.exe -v -g 0x8000000 -b 115200 -w %blpath% %comport%
+ECHO stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w %blpath% %comport%
+stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w %blpath% %comport%
 
 ECHO Writing Multi firmware ...
 ECHO stm32flash.exe -v -s 8 -e 0 -g 0x8002000 -b 115200 -w %fwpath% %comport%
