@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Disable the A7105 protocols
+while read proto; do
+  if [ ! -z "$proto" ]
+  then
+    opt_disable $proto
+  fi
+done <buildroot/etc/a7105_protocols
+
+# Disable the CC2500 protocols
+while read proto; do
+  if [ ! -z "$proto" ]
+  then
+    opt_disable $proto
+  fi
+done <buildroot/etc/cc2500_protocols
+
+# Disable the CYRF6936 protocols
+while read proto; do
+  if [ ! -z "$proto" ]
+  then
+    opt_disable $proto
+  fi
+done <buildroot/etc/cyrf6936_protocols
+
+# Disable the NRF24L01 protocols
+while read proto; do
+  if [ ! -z "$proto" ]
+  then
+    opt_disable $proto
+  fi
+done <buildroot/etc/nrf24l01_protocols
