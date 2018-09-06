@@ -1,6 +1,8 @@
 # Multiprotocol TX Module Arduino IDE Boards
 <img align="right" width=300 src="docs/images/multi.png" />
 
+[![Build Status](https://travis-ci.org/pascallanger/DIY-Multiprotocol-TX-Module-Boards.svg?branch=master)](https://travis-ci.org/pascallanger/DIY-Multiprotocol-TX-Module-Boards)
+
 This repository contains the source for the Arduino IDE board definitions for the Multiprotocol TX Module.  
 
 The main repository for the Multiprotocol TX Module firmware, including all documentation, is [here](https://github.com/pascallanger/DIY-Multiprotocol-TX-Module/).
