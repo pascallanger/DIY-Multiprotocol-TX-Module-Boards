@@ -1,0 +1,75 @@
+dist: trusty
+sudo: true
+  #
+language: c
+  #
+env:
+  global:
+    - IDE_VERSION=1.8.1
+  matrix:
+    - BOARD="multi4in1:avr:multiatmega328p:bootloader=none"
+    - BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
+    - BOARD="multi4in1:avr:multixmega32d4"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=serialMethod"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=serialIncBootloaderMethod"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=TxFlashMethod"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=AutoFlashMethod"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=DFUUploadMethod"
+    #
+notifications:
+  email: false
+  #
+before_install:
+  #
+  # Publish the buildroot script folder
+  - chmod +x ${TRAVIS_BUILD_DIR}/buildroot/bin/*
+  - export PATH=${TRAVIS_BUILD_DIR}/buildroot/bin/:${PATH}
+  #
+  # Install Arduino IDE
+  - wget http://downloads.arduino.cc/arduino-$IDE_VERSION-linux64.tar.xz
+  - tar xf arduino-$IDE_VERSION-linux64.tar.xz
+  - mv arduino-$IDE_VERSION $HOME/arduino-ide
+  - export PATH=$PATH:$HOME/arduino-ide
+  #
+  # Install ARM toolchain
+  - wget http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz
+  - tar xzf gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz
+  - mv gcc-arm-none-eabi-4.8.3-2014q1 $HOME/gcc-arm-none-eabi
+  #
+  # Clone the Multi-Module repository
+  - git clone https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git
+  #
+  - buildMulti() { arduino --pref runtime.tools.arm-none-eabi-gcc.path=${HOME}/gcc-arm-none-eabi --verify --board $BOARD ${TRAVIS_BUILD_DIR}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino; }
+  #
+install:
+  # Copy Multi Boards to the IDE folder
+  - mkdir -p $HOME/arduino-ide/hardware/multi4in1/
+  - cp -r ${TRAVIS_BUILD_DIR}/source/avr $HOME/arduino-ide/hardware/multi4in1/avr
+  - cp -r ${TRAVIS_BUILD_DIR}/source/stm32 $HOME/arduino-ide/hardware/multi4in1/stm32f1
+  #
+before_script:
+  # Change current working directory to the build dir
+  - cd ${TRAVIS_BUILD_DIR}
+  # Log the initial Multi config 
+  - cat DIY-Multiprotocol-TX-Module/Multiprotocol/_Config.h
+  # Derive the Multi protocols from the Multi source
+  - A7105_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]]*_A7105_INO\)\(.*\)/\1/p' DIY-Multiprotocol-TX-Module/Multiprotocol/_Config.h)
+  - CC2500_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]]*_CC2500_INO\)\(.*\)/\1/p' DIY-Multiprotocol-TX-Module/Multiprotocol/_Config.h)
+  - CYRF6936_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]]*_CYRF6936_INO\)\(.*\)/\1/p' DIY-Multiprotocol-TX-Module/Multiprotocol/_Config.h)
+  - NRF24L01_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]]*_NRF24L01_INO\)\(.*\)/\1/p' DIY-Multiprotocol-TX-Module/Multiprotocol/_Config.h)
+  - ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS)
+  - echo $ALL_PROTOCOLS
+  #
+  # Enable CHECK_FOR_BOOTLOADER when needed
+  - if [[ "$BOARD" =~ ":upload_method=TxFlashMethod" ]] || [[ "$BOARD" =~ ":bootloader=optiboot" ]]; then
+      opt_enable CHECK_FOR_BOOTLOADER;
+    fi
+  #
+  # Trim the build down for the Atmega328p board
+  - if [[ "$BOARD" =~ "multi4in1:avr:multiatmega328p:" ]]; then
+      opt_disable $ALL_PROTOCOLS
+      opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
+    fi
+  #
+script:
+  - buildMulti
