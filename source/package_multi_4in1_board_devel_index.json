@@ -78,6 +78,24 @@
         "toolsDependencies": []
       },
       {
+        "name": "Multi 4-in-1 AVR Boards (Devel)",
+        "architecture": "avr",
+        "version": "1.0.4",
+        "category": "Contributed",
+        "help": {
+          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
+        },
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_avr_board_v1.0.4.tar.gz",
+        "archiveFileName": "package_multi_4in1_avr_board_v1.0.4.tar.gz",
+        "checksum": "SHA-256:6c51a4eb09bcd074cc651dab3f2356ea3afd358f6330aba0d8bdfaa75f718dbb",
+        "size": "167975",
+        "boards": [
+          {"name": "Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)"},
+          {"name": "Multi 4-in-1 (OrangeRX)"}
+        ],
+        "toolsDependencies": []
+      },
+      {
         "name": "Multi 4-in-1 STM32 Board (Devel)",
         "architecture": "STM32F1",
         "version": "1.0.0",
