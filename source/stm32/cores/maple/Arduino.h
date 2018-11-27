@@ -29,11 +29,11 @@
 
 #include "wirish.h"
 
-void setup();
-void loop();
 #ifdef __cplusplus
 extern "C"{
 #endif // __cplusplus
+void setup();
+void loop();
 void yield(void);
 #ifdef __cplusplus
 }
