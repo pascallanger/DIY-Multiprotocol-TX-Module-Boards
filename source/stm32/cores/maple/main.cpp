@@ -24,8 +24,14 @@
  * SOFTWARE.
  *****************************************************************************/
 
+ #ifdef __cplusplus
+extern "C"{
+#endif // __cplusplus
 extern void setup(void);
 extern void loop(void);
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 extern void init(void);
 
 // Force init to be called *first*, i.e. before static object allocation.
