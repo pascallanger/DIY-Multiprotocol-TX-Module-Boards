@@ -17,6 +17,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 
 rem Write the firmware without erasing any blocks
-echo stm32flash -v -g %2 -e 0 -b 57600 -w %fwpath% %1 
+echo stm32flash -v -g %2 -e 0 -b 57600 -w "%fwpath%" %1 
 echo.
-stm32flash -v -g %2 -e 0 -b 57600 -w %fwpath% %1 
+stm32flash -v -g %2 -e 0 -b 57600 -w "%fwpath%" %1 
