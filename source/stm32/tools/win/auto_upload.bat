@@ -70,12 +70,12 @@ ECHO stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
 stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
 
 ECHO Writing bootloader ...
-ECHO stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w %blpath% %comport%
-stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w %blpath% %comport%
+ECHO stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w "%blpath%" %comport%
+stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w "%blpath%" %comport%
 
 ECHO Writing Multi firmware ...
-ECHO stm32flash.exe -v -s 8 -e 0 -g 0x8002000 -b 115200 -w %fwpath% %comport%
-stm32flash.exe -v -s 8 -e 0 -g 0x8002000 -b 115200 -w %fwpath% %comport%
+ECHO stm32flash.exe -v -s 8 -e 0 -g 0x8002000 -b 115200 -w "%fwpath%" %comport%
+stm32flash.exe -v -s 8 -e 0 -g 0x8002000 -b 115200 -w "%fwpath%" %comport%
 ECHO.
 ECHO Done.
 GOTO :EOF

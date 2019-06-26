@@ -19,13 +19,13 @@ stm32flash -o -S 0x8000000:129024 -b 57600 %1
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem Write the Multi bootloader
-echo stm32flash.exe -v -e 0 -g 0x8000000 -b 57600 -w %blpath% %1
-stm32flash.exe -v -e 0 -g 0x8000000 -b 57600 -w %blpath% %1
+echo stm32flash.exe -v -e 0 -g 0x8000000 -b 57600 -w "%blpath%" %1
+stm32flash.exe -v -e 0 -g 0x8000000 -b 57600 -w "%blpath%" %1
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem Write the Multi firmware
-echo stm32flash -v -s 8 -e 0 -g 0x8002000 -b 57600 -w %fwpath% %1
-stm32flash -v -s 8 -e 0 -g 0x8002000 -b 57600 -w %fwpath% %1
+echo stm32flash -v -s 8 -e 0 -g 0x8002000 -b 57600 -w "%fwpath%" %1
+stm32flash -v -s 8 -e 0 -g 0x8002000 -b 57600 -w "%fwpath%" %1
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 echo.
