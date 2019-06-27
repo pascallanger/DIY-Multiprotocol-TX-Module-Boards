@@ -98,7 +98,7 @@ namespace do_version
                     if (line.Contains("#define VERSION_REVISION"))
                     {
                         string[] strings = line.Split();
-                        minorVersion = strings[strings.Length - 1];
+                        revisionVersion = strings[strings.Length - 1];
                     }
                     if (line.Contains("#define VERSION_PATCH_LEVEL"))
                     {
@@ -114,9 +114,9 @@ namespace do_version
 
             // Put the version string together
             string multiVersion = null;
-            if (majorVersion != null && minorVersion != null && patchVersion != null)
+            if (majorVersion != null && minorVersion != null && revisionVersion != null && patchVersion != null)
             {
-                multiVersion = String.Format("{0}.{1}.{2}{3}", majorVersion, minorVersion, revisionVersion, patchVersion);
+                multiVersion = String.Format("{0}.{1}.{2}.{3}", majorVersion, minorVersion, revisionVersion, patchVersion);
             } else {
                 multiVersion = "";
             }
