@@ -29,8 +29,8 @@ if %errorlevel% equ 0 (
 
 :USB_FLASH
 ECHO Attempting to flash module via Maple USB ...
-ECHO java -jar maple_loader.jar %comport% 2 "1EAF:0003" "%fwpath%"
-java -jar maple_loader.jar %comport% 2 "1EAF:0003" "%fwpath%"
+ECHO java -jar maple_loader.jar %comport% 2 "1EAF:0003" %fwpath%
+java -jar maple_loader.jar %comport% 2 "1EAF:0003" %fwpath%
 
 REM Delay to wait for the board to reset
 for /l %%x in (1, 1, 40) do (
