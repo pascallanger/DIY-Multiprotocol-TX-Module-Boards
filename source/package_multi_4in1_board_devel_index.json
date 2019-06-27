@@ -114,6 +114,24 @@
         "toolsDependencies": []
       },
       {
+        "name": "Multi 4-in-1 AVR Boards (Devel)",
+        "architecture": "avr",
+        "version": "1.0.6",
+        "category": "Contributed",
+        "help": {
+          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
+        },
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_avr_board_v1.0.6.tar.gz",
+        "archiveFileName": "package_multi_4in1_avr_board_v1.0.6.tar.gz",
+        "checksum": "SHA-256:4f4cf8820e30bf6c88f280514c67ee67b9dc6649f439597cfb8d0be3a5b13bf5",
+        "size": "169819",
+        "boards": [
+          {"name": "Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)"},
+          {"name": "Multi 4-in-1 (OrangeRX)"}
+        ],
+        "toolsDependencies": []
+      },
+      {
         "name": "Multi 4-in-1 STM32 Board (Devel)",
         "architecture": "STM32F1",
         "version": "1.0.0",
@@ -345,24 +363,6 @@
         }]
       },
       {
-        "name": "Multi 4-in-1 AVR Boards",
-        "architecture": "avr",
-        "version": "1.0.6",
-        "category": "Contributed",
-        "help": {
-          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
-        },
-        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_avr_board_v1.0.6.tar.gz",
-        "archiveFileName": "package_multi_4in1_avr_board_v1.0.6.tar.gz",
-        "checksum": "SHA-256:4f4cf8820e30bf6c88f280514c67ee67b9dc6649f439597cfb8d0be3a5b13bf5",
-        "size": "169819",
-        "boards": [
-          {"name": "Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)"},
-          {"name": "Multi 4-in-1 (OrangeRX)"}
-        ],
-        "toolsDependencies": []
-      },
-      {
         "name": "Multi 4-in-1 STM32 Board (Devel)",
         "architecture": "STM32F1",
         "version": "1.1.1",
@@ -405,7 +405,7 @@
         }]
       },
       {
-        "name": "Multi 4-in-1 STM32 Board",
+        "name": "Multi 4-in-1 STM32 Board (Devel)",
         "architecture": "STM32F1",
         "version": "1.1.3",
         "category": "Contributed",
