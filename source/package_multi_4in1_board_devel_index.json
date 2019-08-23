@@ -126,7 +126,7 @@
         },
         "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_avr_board_v1.0.8.tar.gz",
         "archiveFileName": "package_multi_4in1_avr_board_v1.0.8.tar.gz",
-        "checksum": "SHA-256:b9535540908cd3b593e84aa5f11a5aab243ca3fcc47afca502ebd5e73f7b27fc",
+        "checksum": "SHA-256:e49974938036d8d94aaeec00560b3f6ba408ba7c5f3a4310003cefeafebd60ab",
         "size": "295476",
         "boards": [
           {"name": "Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)"},
@@ -438,8 +438,8 @@
         },
         "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_stm32_board_v1.1.5.tar.gz",
         "archiveFileName": "package_multi_4in1_stm32_board_v1.1.5.tar.gz",
-        "checksum": "SHA-256:102a6b8b3e754468bdfc9e7c4e58f98b072c1b994192add47fc01d24a4516b43",
-        "size": "10452014",
+        "checksum": "SHA-256:762275e9da2c5ed175b49d2381bf9944a21e7972e7f13f931f92a999edc17959",
+        "size": "10450547",
         "boards": [{
           "name": "Multi 4-in-1 (STM32F103C)"
         }],

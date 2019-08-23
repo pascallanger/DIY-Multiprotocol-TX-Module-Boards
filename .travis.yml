@@ -5,16 +5,14 @@ language: c
   #
 env:
   global:
-    - IDE_VERSION=1.8.1
+    - IDE_VERSION=1.8.9
   matrix:
     - BOARD="multi4in1:avr:multiatmega328p:bootloader=none"
     - BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
     - BOARD="multi4in1:avr:multixmega32d4"
-    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=serialMethod"
-    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=serialIncBootloaderMethod"
-    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=TxFlashMethod"
-    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=AutoFlashMethod"
-    - BOARD="multi4in1:stm32f1:multistm32f103c:upload_method=DFUUploadMethod"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:debug_option=none"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:debug_option=native"
+    - BOARD="multi4in1:stm32f1:multistm32f103c:debug_option=ftdi"
     #
 notifications:
   email: false
@@ -41,6 +39,14 @@ before_install:
   #
   - buildMulti() { arduino --pref runtime.tools.arm-none-eabi-gcc.path=${HOME}/gcc-arm-none-eabi --verify --board $BOARD ${TRAVIS_BUILD_DIR}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino; }
   #
+  # Arduino IDE adds a lot of noise caused by network traffic; firewall it
+  - sudo iptables -P INPUT DROP
+  - sudo iptables -P FORWARD DROP
+  - sudo iptables -P OUTPUT ACCEPT
+  - sudo iptables -A INPUT -i lo -j ACCEPT
+  - sudo iptables -A OUTPUT -o lo -j ACCEPT
+  - sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  #
 install:
   # Copy Multi Boards to the IDE folder
   - mkdir -p $HOME/arduino-ide/hardware/multi4in1/
@@ -61,7 +67,7 @@ before_script:
   - echo $ALL_PROTOCOLS
   #
   # Enable CHECK_FOR_BOOTLOADER when needed
-  - if [[ "$BOARD" =~ ":upload_method=TxFlashMethod" ]] || [[ "$BOARD" =~ ":bootloader=optiboot" ]]; then
+  - if [[ "$BOARD" =~ ":bootloader=optiboot" ]]; then
       opt_enable CHECK_FOR_BOOTLOADER;
     fi
   #

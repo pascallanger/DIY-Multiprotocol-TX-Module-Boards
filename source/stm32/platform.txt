@@ -139,9 +139,7 @@ tools.maple_upload.upload.params.verbose=-d
 tools.maple_upload.upload.params.quiet=
 tools.maple_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
 
-#Added tool for generic STM32 upload via serial to Serial Port 1 (pins PA9 and PA10) - note. Boot0 line needs to high on board reset to enable upload via serial
-# at the end up the upload the program is automatically run, without the board being reset
-
+# Upload using stm32flash over the serial port
 tools.serial_upload.cmd=serial_upload
 tools.serial_upload.cmd.windows=serial_upload.bat
 tools.serial_upload.cmd.macosx=serial_upload
@@ -160,39 +158,3 @@ tools.serial_upload.erase.pattern=
 tools.serial_upload.bootloader.params.verbose=
 tools.serial_upload.bootloader.params.quiet=
 tools.serial_upload.bootloader.pattern="{path}/{cmd}" {serial.port.file} 0x0 "{runtime.platform.path}/bootloaders/{bootloader.file}"
-
-# Tool for generic STM32 upload via serial to Serial Port 1 including bootloader
-
-tools.serial_upload_inc_bootloader.cmd=serial_upload_inc_bootloader
-tools.serial_upload_inc_bootloader.cmd.windows=serial_upload_inc_bootloader.bat
-tools.serial_upload_inc_bootloader.cmd.macosx=serial_upload_inc_bootloader
-tools.serial_upload_inc_bootloader.path={runtime.platform.path}/tools/win
-tools.serial_upload_inc_bootloader.path.macosx={runtime.platform.path}/tools/macosx
-tools.serial_upload_inc_bootloader.path.linux={runtime.platform.path}/tools/linux
-tools.serial_upload_inc_bootloader.path.linux64={runtime.platform.path}/tools/linux64
-tools.serial_upload_inc_bootloader.upload.params.verbose=-d
-tools.serial_upload_inc_bootloader.upload.params.quiet=n
-tools.serial_upload_inc_bootloader.upload.pattern="{path}/{cmd}" {serial.port.file} 0x8000000 "{build.path}/{build.project_name}.bin" "{runtime.platform.path}/bootloaders/{bootloader.file}"
-
-tools.serial_upload_inc_bootloader.erase.params.verbose=
-tools.serial_upload_inc_bootloader.erase.params.quiet=
-tools.serial_upload_inc_bootloader.erase.pattern=
-
-tools.serial_upload_inc_bootloader.bootloader.params.verbose=
-tools.serial_upload_inc_bootloader.bootloader.params.quiet=
-tools.serial_upload_inc_bootloader.bootloader.pattern="{path}/{cmd}" {serial.port.file} 0x0 "{runtime.platform.path}/bootloaders/{bootloader.file}"
-
-# Dummy tool for "flashing" via Tx
-# Doesn't do any actual upload but provides instructions and path to .bin file
-tools.tx_upload.cmd=tx_upload
-tools.tx_upload.cmd.windows=tx_upload.bat
-tools.tx_upload.cmd.macosx=tx_upload
-tools.tx_upload.cmd.linux=tx_upload
-tools.tx_upload.cmd.linux64=tx_upload
-tools.tx_upload.path={runtime.platform.path}/tools/win
-tools.tx_upload.path.macosx={runtime.platform.path}/tools/macosx
-tools.tx_upload.path.linux={runtime.platform.path}/tools/linux
-tools.tx_upload.path.linux64={runtime.platform.path}/tools/linux64    
-tools.tx_upload.upload.params.verbose=-d
-tools.tx_upload.upload.params.quiet=
-tools.tx_upload.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin"
