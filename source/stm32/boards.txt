@@ -1,86 +1,69 @@
-# See: https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
-# See: http://code.google.com/p/arduino/wiki/Platforms
+# Arduino IDE board definition for the STM32-based Multiprotocol TX Module
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
+# https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards
 
-##############################################################
+####################################################################
+##                    Multi 4-in-1 (STM32F103CB)                  ##
+####################################################################
 
-menu.upload_method=Upload method
-menu.bootloader=Bootloader
-
-##############################################################
-## Multi 4-in-1 STM32 
-## --------------------------------------------------
+# Board name for the Boards menu
 multistm32f103c.name=Multi 4-in-1 (STM32F103CB)
 
+# Additional IDE menu(s)
+menu.debug_option=Debug Option
+
+# Default settings which always apply to the board
 multistm32f103c.vid.0=0x1EAF
 multistm32f103c.pid.0=0x0004
-multistm32f103c.build.variant=generic_stm32f103c
-multistm32f103c.build.vect=VECT_TAB_ADDR=0x8000000
 multistm32f103c.build.core=maple
-multistm32f103c.build.board=MULTI_STM32_FLASH_FROM_TX=114
-multistm32f103c.upload.use_1200bps_touch=false
-multistm32f103c.upload.file_type=bin
-multistm32f103c.upload.auto_reset=true
-multistm32f103c.upload.tool=maple_upload
-multistm32f103c.upload.protocol=maple_dfu
-
 multistm32f103c.build.cpu_flags=-DMCU_STM32F103CB
-multistm32f103c.build.ldscript=ld/jtag.ld
-multistm32f103c.upload.maximum_size=129024
-multistm32f103c.upload.maximum_data_size=20480
-
 multistm32f103c.build.f_cpu=72000000L
 multistm32f103c.build.flags.optimize=-Os
 multistm32f103c.build.flags.ldspecs=
-
+multistm32f103c.build.ldscript=ld/jtag.ld
+multistm32f103c.build.variant=generic_stm32f103c
+multistm32f103c.upload.auto_reset=true
+multistm32f103c.upload.file_type=bin
+multistm32f103c.upload.maximum_data_size=20480
+multistm32f103c.upload.protocol=maple_dfu
+multistm32f103c.upload.tool=maple_upload
+multistm32f103c.upload.use_1200bps_touch=false
 multistm32f103c.bootloader.tool=serial_upload
+multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
 
-#---------------------------- UPLOAD METHODS ---------------------------
+# Default settings which may be overridden by sub-menu choices
+multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=115
+multistm32f103c.build.ldscript=ld/bootloader_20.ld
+multistm32f103c.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
+multistm32f103c.build.vect=VECT_TAB_ADDR=0x8002000
+multistm32f103c.upload.maximum_size=120832
+multistm32f103c.upload.tool=auto_upload
 
-multistm32f103c.menu.upload_method.TxFlashMethod=Flash from Tx
-multistm32f103c.menu.upload_method.TxFlashMethod.build.board=MULTI_STM32_FLASH_FROM_TX=114
-multistm32f103c.menu.upload_method.TxFlashMethod.upload.tool=tx_upload
-multistm32f103c.menu.upload_method.TxFlashMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
-multistm32f103c.menu.upload_method.TxFlashMethod.build.vect=VECT_TAB_ADDR=0x8002000
-multistm32f103c.menu.upload_method.TxFlashMethod.build.ldscript=ld/bootloader_20.ld
-multistm32f103c.menu.upload_method.TxFlashMethod.bootloader.file=Multi4in1/StmMulti4in1.bin
-multistm32f103c.menu.upload_method.TxFlashMethod.upload.maximum_size=120832
+## Debug Option menu options
+# No Debugging - default option
+# - Uses the default board settings
+# - Builds firmware with support for the bootloader
+# - Uploads via native USB or FTDI
+multistm32f103c.menu.debug_option.none=None
 
-multistm32f103c.menu.upload_method.AutoFlashMethod=Auto Detect (USB or Serial)
-multistm32f103c.menu.upload_method.AutoFlashMethod.build.board=MULTI_STM32_WITH_BOOT=114
-multistm32f103c.menu.upload_method.AutoFlashMethod.upload.tool=auto_upload
-multistm32f103c.menu.upload_method.AutoFlashMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
-multistm32f103c.menu.upload_method.AutoFlashMethod.build.vect=VECT_TAB_ADDR=0x8002000
-multistm32f103c.menu.upload_method.AutoFlashMethod.build.ldscript=ld/bootloader_20.ld
-multistm32f103c.menu.upload_method.AutoFlashMethod.bootloader.file=Multi4in1/StmMulti4in1.bin
-multistm32f103c.menu.upload_method.AutoFlashMethod.upload.maximum_size=120832
+# Native USB Debugging - debugging for modules with a native USB port, e.g. iRangeX IRX4 Plus, Banggood, DIY, early JP4IN1
+# - Overrides build flags and upload method
+# - Builds firmware with support for the bootloader
+# - Enables debugging in the Multimodule firmware
+# - Forces upload via USB to prevent uploading to new JP4IN1 modules
+multistm32f103c.menu.debug_option.native=Native USB Debugging
+multistm32f103c.menu.debug_option.native.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER -DARDUINO_MULTI_DEBUG
+multistm32f103c.menu.debug_option.native.upload.protocol=maple_dfu
+multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
 
-multistm32f103c.menu.upload_method.DFUUploadMethod=Upload via USB
-multistm32f103c.menu.upload_method.DFUUploadMethod.build.board=MULTI_STM32_NO_BOOT=114
-multistm32f103c.menu.upload_method.DFUUploadMethod.upload.protocol=maple_dfu
-multistm32f103c.menu.upload_method.DFUUploadMethod.upload.tool=maple_upload
-multistm32f103c.menu.upload_method.DFUUploadMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
-multistm32f103c.menu.upload_method.DFUUploadMethod.build.vect=VECT_TAB_ADDR=0x8002000
-multistm32f103c.menu.upload_method.DFUUploadMethod.build.ldscript=ld/bootloader_20.ld
-multistm32f103c.menu.upload_method.DFUUploadMethod.upload.usbID=1EAF:0003
-multistm32f103c.menu.upload_method.DFUUploadMethod.upload.altID=2
-multistm32f103c.menu.upload_method.DFUUploadMethod.bootloader.file=Multi4in1/StmMulti4in1.bin
-multistm32f103c.menu.upload_method.DFUUploadMethod.upload.maximum_size=120832
-
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod=Upload via Serial inc. Bootloader (FTDI)
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.build.board=MULTI_STM32_WITH_BOOT=114
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.upload.protocol=maple_serial
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.upload.tool=serial_upload_inc_bootloader
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.build.vect=VECT_TAB_ADDR=0x8002000
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.build.ldscript=ld/bootloader_20.ld
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.bootloader.file=Multi4in1/StmMulti4in1.bin
-multistm32f103c.menu.upload_method.serialIncBootloaderMethod.upload.maximum_size=120832
-
-multistm32f103c.menu.upload_method.serialMethod=Upload via Serial (FTDI)
-multistm32f103c.menu.upload_method.serialMethod.upload.protocol=maple_serial
-multistm32f103c.menu.upload_method.serialMethod.upload.tool=serial_upload
-multistm32f103c.menu.upload_method.serialMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
-multistm32f103c.menu.upload_method.serialMethod.build.board=MULTI_STM32_NO_BOOT=114
-multistm32f103c.menu.upload_method.serialMethod.bootloader.file=Multi4in1/StmMulti4in1.bin
-
-##############################################################
+# Serial/FTDI Debugging - debugging for use with newer JP4IN1 or any module with an external USB-to-serial adapter
+# - Overrides default board settings
+# - Builds firmware without support for the bootloader
+# - Enables debugging in the Multimodule firmware
+# - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
+multistm32f103c.menu.debug_option.ftdi=Serial/FTDI Debugging
+multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=115
+multistm32f103c.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
+multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
+multistm32f103c.menu.debug_option.ftdi.upload.protocol=maple_serial
+multistm32f103c.menu.debug_option.ftdi.upload.tool=serial_upload
