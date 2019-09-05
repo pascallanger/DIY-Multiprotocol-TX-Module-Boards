@@ -29,23 +29,12 @@ if %errorlevel% equ 0 (
 
 :USB_FLASH
 ECHO Attempting to flash module via Maple USB ...
-ECHO java -jar maple_loader.jar %comport% 2 "1EAF:0003" %fwpath%
-java -jar maple_loader.jar %comport% 2 "1EAF:0003" %fwpath%
+ECHO maple-reset.exe %comport% 1000
+maple-reset.exe %comport% 1000
+ECHO.
+ECHO dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
+dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
 
-REM Delay to wait for the board to reset
-for /l %%x in (1, 1, 40) do (
-  ping -w 50 -n 1 192.0.2.1 > nul
-  mode %1 > nul
-  if ERRORLEVEL 0 (
-    ECHO.
-    ECHO Done.
-    ECHO.
-    GOTO :EOF
-  )
-)
-ECHO.
-ECHO Timeout waiting for %1
-ECHO.
 GOTO :EOF
 
 :FTDI_CHECK

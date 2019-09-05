@@ -20,13 +20,14 @@ multistm32f103c.build.cpu_flags=-DMCU_STM32F103CB
 multistm32f103c.build.f_cpu=72000000L
 multistm32f103c.build.flags.optimize=-Os
 multistm32f103c.build.flags.ldspecs=
-multistm32f103c.build.ldscript=ld/jtag.ld
 multistm32f103c.build.variant=generic_stm32f103c
+multistm32f103c.upload.altID=2
 multistm32f103c.upload.auto_reset=true
 multistm32f103c.upload.file_type=bin
 multistm32f103c.upload.maximum_data_size=20480
 multistm32f103c.upload.protocol=maple_dfu
 multistm32f103c.upload.tool=maple_upload
+multistm32f103c.upload.usbID=1EAF:0003
 multistm32f103c.upload.use_1200bps_touch=false
 multistm32f103c.bootloader.tool=serial_upload
 multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
@@ -63,7 +64,9 @@ multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
 # - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
 multistm32f103c.menu.debug_option.ftdi=Serial/FTDI Debugging
 multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=115
+multistm32f103c.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
 multistm32f103c.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
 multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
+multistm32f103c.menu.debug_option.ftdi.upload.maximum_size=129024
 multistm32f103c.menu.debug_option.ftdi.upload.protocol=maple_serial
 multistm32f103c.menu.debug_option.ftdi.upload.tool=serial_upload
