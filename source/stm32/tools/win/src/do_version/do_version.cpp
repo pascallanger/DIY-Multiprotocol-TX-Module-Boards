@@ -92,6 +92,12 @@ int main(int argc, char *argv[])
 	// Path to the source file where we'll find the version numbers
 	std::string versionPath = buildPath + "\\sketch\\Multiprotocol.h";
 
+	// Error if the source file doesn't exist
+	if (!std::filesystem::exists(versionPath)) {
+		fprintf(stdout, "ERROR: %s does not exist\n", versionPath.c_str());
+		return -1;
+	}
+
 	// Stream for the file with version numbers
 	std::ifstream versionFile(versionPath);
 	
@@ -100,30 +106,29 @@ int main(int argc, char *argv[])
 
 	// Iterate through the version source file to find the lines containing elements of the version number
 	while (getline(versionFile, line)) {
-
 		// Find the major version number and get the number from the end of the line
-		if (line.find("#define VERSION_MAJOR") >= 0)
+		if (line.find("#define VERSION_MAJOR") != std::string::npos)
 		{
 			std::string tmp = line.substr(line.find_last_of(" \t"));
 			versionMajor = tmp.substr(tmp.find_first_not_of(" \t"));
 		}
 
 		// Find the minor version number and get the number from the end of the line
-		if (line.find("#define VERSION_MINOR") >= 0)
+		if (line.find("#define VERSION_MINOR") != std::string::npos)
 		{
 			std::string tmp = line.substr(line.find_last_of(" \t"));
 			versionMinor = tmp.substr(tmp.find_first_not_of(" \t"));
 		}
 
 		// Find the revision number and get the number from the end of the line
-		if (line.find("#define VERSION_REVISION") >= 0)
+		if (line.find("#define VERSION_REVISION") != std::string::npos)
 		{
 			std::string tmp = line.substr(line.find_last_of(" \t"));
 			versionRevision = tmp.substr(tmp.find_first_not_of(" \t"));
 		}
 
 		// Find the patch level and get the number from the end of the string
-		if (line.find("#define VERSION_PATCH_LEVEL") >= 0)
+		if (line.find("#define VERSION_PATCH_LEVEL") != std::string::npos)
 		{
 			std::string tmp = line.substr(line.find_last_of(" \t"));
 			versionPatch = tmp.substr(tmp.find_first_not_of(" \t"));
@@ -132,6 +137,8 @@ int main(int argc, char *argv[])
 
 	// The concatenated version number string
 	std::string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
+
+	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
 
 	// Filesystem path to the default compiled firmware file in the build directory
 	std::filesystem::path src = buildPath + "\\" + projectName + multiExtension;
