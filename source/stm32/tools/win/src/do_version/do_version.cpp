@@ -181,6 +181,7 @@ int main(int argc, char *argv[])
 		if (std::filesystem::exists(exportSketchPath))
 		{
 			std::filesystem::rename(exportSketchPath,exportDestPath);
+			fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", exportDestPath.string());
 		}
 	}
 }
