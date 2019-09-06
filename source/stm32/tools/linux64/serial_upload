@@ -1,13 +1,22 @@
 #!/bin/bash
+
+# Get the parameters from the command line
 port=$1
 addr=$2
-file=$3
+fwfile=$3
 
+# Pick the correct flash tool for the system architecture
 uname -m | grep "x86_64" 2>&1 1>/dev/null
 if [ $? -eq 0 ]; then
-  # Do 64-bit stuff
-  $(dirname $0)/../linux64/stm32flash/stm32flash -v -g $addr -b 57600 -w "$file" /dev/"$port"
+  STM_TOOL=$(dirname "$0")/../linux64/stm32flash/stm32flash
 else
-  # Do 32-bit stuff
-  $(dirname $0)/stm32flash/stm32flash -v -g $addr -b 57600 -w "$file" /dev/"$port"
+  STM_TOOL=$(dirname "$0")/../linux/stm32flash/stm32flash
 fi
+
+# Erase the flash
+echo "$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+"$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+
+# Write the firmware
+echo "$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$fwfile" /dev/"$port"
+"$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$fwfile" /dev/"$port"

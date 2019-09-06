@@ -5,14 +5,14 @@ set driverLetter=%~dp0
 set driverLetter=%driverLetter:~0,2%
 %driverLetter%
 cd %~dp0
-java -jar maple_loader.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
 
-for /l %%x in (1, 1, 40) do (
-  ping -w 50 -n 1 192.0.2.1 > nul
-  mode %1 > nul
-  if ERRORLEVEL 0 goto comPortFound
-)
+set comport=%1
+set fwpath=%4
+set fwpath=%fwpath:/=\%
 
-echo timeout waiting for %1 serial
-
-:comPortFound
+ECHO Attempting to flash module via Maple USB ...
+ECHO maple-reset.exe %comport% 1000
+maple-reset.exe %comport% 1000
+ECHO.
+ECHO dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
+dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R

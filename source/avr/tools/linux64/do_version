@@ -18,6 +18,9 @@ case "$MULTI_BOARD" in
         MULTI_STM32_NO_BOOT)
                 MULTI_TYPE=stm
                 ;;
+        MULTI_STM32_WITH_BOOT)
+                MULTI_TYPE=stm
+                ;;
         MULTI_STM32_FLASH_FROM_TX)
                 MULTI_TYPE=stm
                 ;;
@@ -53,19 +56,19 @@ fi
 
 if [ $# -eq 5 ]; then
         if [ $EXPORT_FLAG == "EXPORT" ]; then
-
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
-                fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.bin" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
-                fi
-
                 if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.hex" ]; then
                         rm "$SKETCH_PATH/multi-$MULTI_TYPE.hex"
                 fi
                 if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
                         rm "$SKETCH_PATH/multi-$MULTI_TYPE.bin"
+                fi
+                if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
+                        cp "$BUILD_PATH/$PROJECT_NAME.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                        echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                fi
+                if [ -e "$BUILD_PATH/$PROJECT_NAME.bin" ]; then
+                        cp "$BUILD_PATH/$PROJECT_NAME.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                        echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                 fi
         fi
 fi
