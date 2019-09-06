@@ -1,11 +1,23 @@
 #!/bin/bash
 set -e
 
+# Get the parameters from the command line
 port=$1
 addr=$2
 fwfile=$3
 bootloaderfile=$4
 
-"$(dirname "$0")/stm32flash/stm32flash" -o -S 0x8000000:129024 -b 57600 /dev/"$port"
-"$(dirname "$0")/stm32flash/stm32flash" -v -e 0 -g 0x8000000 -b 57600 -w "$bootloaderfile" /dev/"$port"
-"$(dirname "$0")/stm32flash/stm32flash" -v -s 8 -e 0 -g 0x8002000 -b 57600 -w "$fwfile" /dev/"$port"
+# Pick the correct flash tool for the system architecture
+STM_TOOL="$(dirname "$0")/stm32flash/stm32flash"
+
+# Erase the flash
+echo "$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+"$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+
+# Write the bootloader
+echo "$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$bootloaderfile" /dev/"$port"
+"$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$bootloaderfile" /dev/"$port"
+
+# Write the firmware
+echo "$STM_TOOL" -v -e 0 -s 8 -g 0x8002000 -b 115200 -w "$fwfile" /dev/"$port"
+"$STM_TOOL" -v -e 0 -s 8 -g 0x8002000 -b 115200 -w "$fwfile" /dev/"$port"

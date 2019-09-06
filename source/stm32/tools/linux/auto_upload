@@ -42,4 +42,3 @@ else
   echo "${MAPLE_UPLOAD}" $1 2 1eaf:0003 $2
   "${MAPLE_UPLOAD}" $1 2 1eaf:0003 $2
 fi
-
