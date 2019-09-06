@@ -49,26 +49,20 @@ int main(int argc, char *argv[])
 	// The type of Multi board (avr, stm, or orx).
 	std::string multiType;
 
-	// The file extension which the compiled file will have (.hex or .bin).
-	std::string multiExtension;
-
 	// Set the board type and file extension for AVR boards
 	if (multiBoard.find("MULTI_NO_BOOT=") == 0 || multiBoard.find("MULTI_FLASH_FROM_TX=") == 0)
 	{
 		multiType = "avr";
-		multiExtension = ".hex";
 	}
 	// Set the board type and file extension for STM32 boards
 	else if (multiBoard.find("MULTI_STM32_NO_BOOT=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0 || multiBoard == "MULTI_STM32_FLASH_FROM_TX=")
 	{
 		multiType = "stm";
-		multiExtension = ".bin";
 	}
 	// Set the board type and file extension for OrangeRX boards
 	else if (multiBoard.find("MULTI_ORANGERX=") == 0)
 	{
 		multiType = "orx";
-		multiExtension = ".hex";
 	}
 	// Throw an error and quit for an unknown board
 	else
@@ -140,48 +134,74 @@ int main(int argc, char *argv[])
 
 	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
 
-	// Filesystem path to the default compiled firmware file in the build directory
-	std::filesystem::path src = buildPath + "\\" + projectName + multiExtension;
+	// Filesystem paths to the default compiled firmware files in the build directory
+	std::filesystem::path binFileSource = buildPath + "\\" + projectName + + ".bin";
+	std::filesystem::path hexFileSource = buildPath + "\\" + projectName + +".hex";
 
 	// Filesystem path to the firmware file with module type and version number in the name
-	std::filesystem::path dest = buildPath + "\\multi-" + multiType + "-" + multiVersion + multiExtension;
+	std::filesystem::path binFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
+	std::filesystem::path hexFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
 
-	// Check if the source file exists
-	if (std::filesystem::exists(src))
+	// Create the versioned bin file if the source file exists
+	if (std::filesystem::exists(binFileSource))
 	{
 		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
-		std::filesystem::copy_file(src, dest, std::filesystem::copy_options::overwrite_existing);
+		std::filesystem::copy_file(binFileSource, binFileDest, std::filesystem::copy_options::overwrite_existing);
+	}
+
+	// Create the versioned hex file if the source file exists
+	if (std::filesystem::exists(hexFileSource))
+	{
+		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
+		std::filesystem::copy_file(hexFileSource, hexFileDest, std::filesystem::copy_options::overwrite_existing);
 	}
 
 	// If we're exporting do a few extra steps
 	if (exportFlag)
 	{
 		// Filesystem path to the default export file created by the IDE in the build path
-		std::filesystem::path exportPath = buildPath + "\\multi-" + multiType + multiExtension;
+		std::filesystem::path binExportPath = sketchPath + "\\multi-" + multiType + ".bin";
+		std::filesystem::path hexExportPath = sketchPath + "\\multi-" + multiType + ".hex";
 		
-		// Remove the build path export file if it exists
-		if (std::filesystem::exists(exportPath))
+		// Filesystem path for the export file with module type and version number we will export to the sketch path
+		std::filesystem::path binExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
+		std::filesystem::path hexExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
+		
+		// Remove existing versioned files
+		if (std::filesystem::exists(binExportDest))
 		{
-			std::filesystem::remove(exportPath);
+			std::filesystem::remove(binExportDest);
 		}
-
-		// Filesystem path to the export file created by the IDE in the sketch directory
-		std::filesystem::path exportSketchPath = sketchPath + "\\multi-" + multiType + multiExtension;
-
-		// Filesystem path for the export file with module type and version number in teh sketch directory
-		std::filesystem::path exportDestPath = sketchPath + "\\multi-" + multiType + "-" + multiVersion + multiExtension;
-
-		// Remove a versioned firmware file if one exists in the sketch directory
-		if (std::filesystem::exists(exportDestPath))
+		if (std::filesystem::exists(hexExportDest))
 		{
-			std::filesystem::remove(exportDestPath);
+			std::filesystem::remove(hexExportDest);
 		}
 
 		// Rename the export file created by the IDE in the sketch directory to the versioned name
-		if (std::filesystem::exists(exportSketchPath))
+		if (std::filesystem::exists(binExportPath))
 		{
-			std::filesystem::rename(exportSketchPath,exportDestPath);
-			fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", exportDestPath.string());
+			std::filesystem::rename(binExportPath, binExportDest);
+		}
+		if (std::filesystem::exists(hexExportPath))
+		{
+			std::filesystem::rename(hexExportPath, hexExportDest);
+		}
+
+		// Tell the user what we exported
+		if (std::filesystem::exists(binExportDest) && std::filesystem::exists(hexExportDest))
+		{
+			fprintf(stdout, "\nCompiled firmware exported as \"%s\" and \"%s\"\n", binExportDest.string().c_str(), hexExportDest.string().c_str());
+		}
+		else
+		{
+			if (std::filesystem::exists(binExportDest))
+			{
+				fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", binExportDest.string().c_str());
+			}
+			if (std::filesystem::exists(hexExportDest))
+			{
+				fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", hexExportDest.string().c_str());
+			}
 		}
 	}
 }
