@@ -1,7 +1,17 @@
 #!/bin/bash
+
+# Get the parameters from the command line
 port=$1
 addr=$2
-file=$3
+fwfile=$3
 
-"$(dirname "$0")/stm32flash/stm32flash" -o -S 0x8000000:129024 -b 57600 /dev/"$port"
-"$(dirname "$0")/stm32flash/stm32flash" -v -e 0 -g $addr -b 57600 -w "$file" /dev/"$port"
+# Pick the correct flash tool for the system architecture
+STM_TOOL="$(dirname "$0")/stm32flash/stm32flash"
+
+# Erase the flash
+echo "$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+"$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+
+# Write the firmware
+echo "$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$fwfile" /dev/"$port"
+"$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$fwfile" /dev/"$port"
