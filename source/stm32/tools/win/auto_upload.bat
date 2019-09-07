@@ -29,8 +29,8 @@ if %errorlevel% equ 0 (
 
 :USB_FLASH
 ECHO Attempting to flash module via Maple USB ...
-ECHO maple-reset.exe %comport% 1000
-maple-reset.exe %comport% 1000
+ECHO maple-reset.exe %comport% 2000
+maple-reset.exe %comport% 2000
 ECHO.
 ECHO dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
 dfu-util.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
