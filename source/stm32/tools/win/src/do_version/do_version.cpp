@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/stat.h>
 #include <filesystem>
+#include <regex>
 
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
 	size_t start_pos = 0;
@@ -15,6 +16,60 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
 	return str;
+}
+
+bool getBooleanConfigOption(std::string option, std::string path)
+{
+	bool optionEnabled = false;
+
+	std::string line;
+
+	// Regex to find the #define line for the option
+	std::regex optionRegex ("^\\s*(\\/\\/)?(\\s*)?#define\\s+" + option + "(.*)?$");
+	
+	std::smatch m;
+
+	// Stream for the config file
+	std::ifstream file(path);
+
+	// Iterate through the config file to find the config options we're interested in
+	while (getline(file, line) && !optionEnabled) {
+		
+		if (std::regex_search(line, m, optionRegex)) {
+			// fprintf(stdout, "Option %s found:\n%s\n", option.c_str(), line.c_str());
+			if (m[1] != "\/\/")
+			{
+				optionEnabled = true;
+			}
+		}
+	}
+
+	return optionEnabled;
+}
+
+std::string getDefineValue(std::string option, std::string path)
+{
+	std::string result;
+
+	std::string line;
+
+	// Regex to find the #define line for the option
+	std::regex optionRegex("^\\s*#define\\s+" + option + "(?:[ \\t]+)([\\w \\t]+)(\\/\\/.*)?$");
+
+	std::smatch m;
+
+	// Stream for the config file
+	std::ifstream file(path);
+
+	// Iterate through the config file to find the config options we're interested in
+	while (getline(file, line)) {
+
+		if (std::regex_search(line, m, optionRegex)) {
+			result = m[1];
+		}
+	}
+
+	return result;
 }
 
 int main(int argc, char *argv[])
@@ -92,47 +147,83 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	// Path to the configuration file
+	std::string configPath = buildPath + "\\sketch\\_Config.h";
+
+	// Error if the source file doesn't exist
+	if (!std::filesystem::exists(configPath)) {
+		fprintf(stdout, "ERROR: %s does not exist\n", configPath.c_str());
+		return -1;
+	}
+
 	// Stream for the file with version numbers
 	std::ifstream versionFile(versionPath);
 	
 	// Line in file
 	std::string line;
 
-	// Iterate through the version source file to find the lines containing elements of the version number
-	while (getline(versionFile, line)) {
-		// Find the major version number and get the number from the end of the line
-		if (line.find("#define VERSION_MAJOR") != std::string::npos)
-		{
-			std::string tmp = line.substr(line.find_last_of(" \t"));
-			versionMajor = tmp.substr(tmp.find_first_not_of(" \t"));
-		}
-
-		// Find the minor version number and get the number from the end of the line
-		if (line.find("#define VERSION_MINOR") != std::string::npos)
-		{
-			std::string tmp = line.substr(line.find_last_of(" \t"));
-			versionMinor = tmp.substr(tmp.find_first_not_of(" \t"));
-		}
-
-		// Find the revision number and get the number from the end of the line
-		if (line.find("#define VERSION_REVISION") != std::string::npos)
-		{
-			std::string tmp = line.substr(line.find_last_of(" \t"));
-			versionRevision = tmp.substr(tmp.find_first_not_of(" \t"));
-		}
-
-		// Find the patch level and get the number from the end of the string
-		if (line.find("#define VERSION_PATCH_LEVEL") != std::string::npos)
-		{
-			std::string tmp = line.substr(line.find_last_of(" \t"));
-			versionPatch = tmp.substr(tmp.find_first_not_of(" \t"));
-		}
-	}
+	versionMajor = getDefineValue("VERSION_MAJOR", versionPath);
+	versionMinor = getDefineValue("VERSION_MINOR", versionPath);
+	versionRevision = getDefineValue("VERSION_REVISION", versionPath);
+	versionPatch = getDefineValue("VERSION_PATCH_LEVEL", versionPath);
 
 	// The concatenated version number string
 	std::string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
 
 	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
+
+	// Variables for config lines we're interested in
+	bool checkForBootloaderEnabled = getBooleanConfigOption("CHECK_FOR_BOOTLOADER", configPath);
+	bool telemetryEnabled = getBooleanConfigOption("TELEMETRY", configPath);
+	bool multiStatusEnabled = getBooleanConfigOption("MULTI_STATUS", configPath);
+	bool multiTelemetryEnabled = getBooleanConfigOption("MULTI_TELEMETRY", configPath);
+	bool invertTelemetryEnabled = getBooleanConfigOption("INVERT_TELEMETRY", configPath);
+
+
+	std::string flag_BOOTLOADER_SUPPORT = "u";
+	if (multiBoard.find("MULTI_FLASH_FROM_TX=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0)
+	{
+		flag_BOOTLOADER_SUPPORT = "b";
+	}
+
+	std::string flag_TELEMETRY_TYPE = "u";
+	if (telemetryEnabled)
+	{
+		if ((multiStatusEnabled && multiTelemetryEnabled) || (!multiStatusEnabled && !multiTelemetryEnabled))
+		{
+			flag_TELEMETRY_TYPE = "u";
+		}
+		else
+		{
+			if (multiStatusEnabled)
+			{
+				flag_TELEMETRY_TYPE = "s";
+			}
+			if (multiTelemetryEnabled)
+			{
+				flag_TELEMETRY_TYPE = "t";
+			}
+		}
+	}
+
+	std::string flag_CHECK_FOR_BOOTLOADER = checkForBootloaderEnabled ? "c" : "u";
+	std::string flag_INVERT_TELEMTERY = invertTelemetryEnabled ? "i" : "u";
+
+	// The features for the signature
+	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY;
+
+	// The version for the signature
+	std::string signatureVersionMajor = versionMajor.length() == 1 ? "0" + versionMajor : versionMajor;
+	std::string signatureVersionMinor = versionMinor.length() == 1 ? "0" + versionMinor : versionMinor;
+	std::string signatureVersionRevision = versionRevision.length() == 1 ? "0" + versionRevision : versionRevision;
+	std::string signatureVersionPatch = versionPatch.length() == 1 ? "0" + versionPatch : versionPatch;
+	std::string multiSignatureVersion = signatureVersionMajor + signatureVersionMinor + signatureVersionRevision + signatureVersionPatch;
+
+	// Assemble the signature for the.bin file
+	// Signature format is multi - [board type] - [bootloader support][check for bootloader][multi telemetry type][telemetry inversion] - [firmware version]
+	std::string multiSignature = "multi-" + multiType + "-" + multiSignatureFlags + "-" + multiSignatureVersion;
+
+	// fprintf(stdout, "Firmware signature: %s\n", multiSignature.c_str());
 
 	// Filesystem paths to the default compiled firmware files in the build directory
 	std::filesystem::path binFileSource = buildPath + "\\" + projectName + + ".bin";
@@ -145,6 +236,13 @@ int main(int argc, char *argv[])
 	// Create the versioned bin file if the source file exists
 	if (std::filesystem::exists(binFileSource))
 	{
+		// Append the signature in the bin file, if it exists
+		std::ofstream outfile;
+
+		outfile.open(binFileSource, std::ios_base::app);
+		outfile << multiSignature;
+		outfile.close();
+
 		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
 		std::filesystem::copy_file(binFileSource, binFileDest, std::filesystem::copy_options::overwrite_existing);
 	}
