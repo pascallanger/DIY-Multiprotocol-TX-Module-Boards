@@ -98,10 +98,10 @@ recipe.hooks.objcopy.postobjcopy.01.pattern.macosx="{runtime.platform.path}/tool
 
 ## Post savehex (export compiled binary) recipes
 # If we're exporting the hex file, rename it with the version number
-recipe.hooks.savehex.postsavehex.01.pattern.windows="{runtime.platform.path}/tools/win/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} 0 EXPORT
-recipe.hooks.savehex.postsavehex.01.pattern.linux="{runtime.platform.path}/tools/linux/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} 0 EXPORT
-recipe.hooks.savehex.postsavehex.01.pattern.linux64="{runtime.platform.path}/tools/linux64/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} 0 EXPORT
-recipe.hooks.savehex.postsavehex.01.pattern.macosx="{runtime.platform.path}/tools/macosx/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} 0 EXPORT
+recipe.hooks.savehex.postsavehex.01.pattern.windows="{runtime.platform.path}/tools/win/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
+recipe.hooks.savehex.postsavehex.01.pattern.linux="{runtime.platform.path}/tools/linux/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
+recipe.hooks.savehex.postsavehex.01.pattern.linux64="{runtime.platform.path}/tools/linux64/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
+recipe.hooks.savehex.postsavehex.01.pattern.macosx="{runtime.platform.path}/tools/macosx/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
 
 # AVR Uploader/Programmers tools
 # ------------------------------
