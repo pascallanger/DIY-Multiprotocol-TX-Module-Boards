@@ -75,7 +75,7 @@ std::string getDefineValue(std::string option, std::string path)
 int main(int argc, char *argv[])
 {
 	// Error if the number of arguments is wrong - we expect four or five
-	if (argc < 5 || argc > 6)
+	if (argc < 6 || argc > 7)
 	{
 		fprintf(stderr, "ERROR: Incorrect number of arguments\n");
 		return -1;
@@ -93,10 +93,13 @@ int main(int argc, char *argv[])
 	// Arduino IDE Board name.
 	std::string multiBoard = argv[4];
 
+	// Debug flag from Arduino settings.
+	std::int16_t boardDebugFlag = std::stoi(argv[5]);
+
 	// Flag indicating whether or not the user selected to export the binary.
 	std::int16_t exportFlag = 0;
 
-	if (argc == 6 && std::string(argv[5]) == "EXPORT")
+	if (argc == 7 && std::string(argv[6]) == "EXPORT")
 	{
 		exportFlag = 1;
 	}
@@ -156,6 +159,15 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	// Path to the Multiprotocol.ino.cpp file
+	std::string inoPath = buildPath + "\\sketch\\Multiprotocol.ino.cpp";
+
+	// Error if the source file doesn't exist
+	if (!std::filesystem::exists(inoPath)) {
+		fprintf(stdout, "ERROR: %s does not exist\n", inoPath.c_str());
+		return -1;
+	}
+
 	// Stream for the file with version numbers
 	std::ifstream versionFile(versionPath);
 	
@@ -179,6 +191,7 @@ int main(int argc, char *argv[])
 	bool multiTelemetryEnabled = getBooleanConfigOption("MULTI_TELEMETRY", configPath);
 	bool invertTelemetryEnabled = getBooleanConfigOption("INVERT_TELEMETRY", configPath);
 
+	bool debugSerialEnabled = getBooleanConfigOption("DEBUG_SERIAL", inoPath);
 
 	std::string flag_BOOTLOADER_SUPPORT = "u";
 	if (multiBoard.find("MULTI_FLASH_FROM_TX=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0)
@@ -209,8 +222,10 @@ int main(int argc, char *argv[])
 	std::string flag_CHECK_FOR_BOOTLOADER = checkForBootloaderEnabled ? "c" : "u";
 	std::string flag_INVERT_TELEMTERY = invertTelemetryEnabled ? "i" : "u";
 
+	std::string flag_DebugBuild = debugSerialEnabled || boardDebugFlag > 0 ? "d" : "u";
+
 	// The features for the signature
-	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY;
+	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY + flag_DebugBuild;
 
 	// The version for the signature
 	std::string signatureVersionMajor = versionMajor.length() == 1 ? "0" + versionMajor : versionMajor;
