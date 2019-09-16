@@ -34,7 +34,6 @@ multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
 
 # Default settings which may be overridden by sub-menu choices
 multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=115
-multistm32f103c.build.debug_flag=0
 multistm32f103c.build.ldscript=ld/bootloader_20.ld
 multistm32f103c.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
 multistm32f103c.build.vect=VECT_TAB_ADDR=0x8002000
@@ -54,7 +53,6 @@ multistm32f103c.menu.debug_option.none=None
 # - Enables debugging in the Multimodule firmware
 # - Forces upload via USB to prevent uploading to new JP4IN1 modules
 multistm32f103c.menu.debug_option.native=Native USB Debugging
-multistm32f103c.menu.debug_option.native.build.debug_flag=1
 multistm32f103c.menu.debug_option.native.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER -DARDUINO_MULTI_DEBUG
 multistm32f103c.menu.debug_option.native.upload.protocol=maple_dfu
 multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
@@ -66,7 +64,6 @@ multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
 # - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
 multistm32f103c.menu.debug_option.ftdi=Serial/FTDI Debugging
 multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=115
-multistm32f103c.menu.debug_option.ftdi.build.debug_flag=2
 multistm32f103c.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
 multistm32f103c.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
 multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000

@@ -18,33 +18,28 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 	return str;
 }
 
-bool getBooleanConfigOption(std::string option, std::string path)
+bool FirmwareFlag(std::string flag, std::string path)
 {
-	bool optionEnabled = false;
+	bool result = false;
 
-	std::string line;
-
-	// Regex to find the #define line for the option
-	std::regex optionRegex ("^\\s*(\\/\\/)?(\\s*)?#define\\s+" + option + "(.*)?$");
+	// Regex to find the flag line
+	std::regex optionRegex ("^[ \t]*uint8_t[ \t]+firmwareFlag_" + flag + ".*$");
 	
 	std::smatch m;
 
-	// Stream for the config file
+	// Stream for the file
 	std::ifstream file(path);
 
-	// Iterate through the config file to find the config options we're interested in
-	while (getline(file, line) && !optionEnabled) {
+	// Iterate through the file to find the flag we're interested in
+	std::string line;
+	while (getline(file, line) && !result) {
 		
 		if (std::regex_search(line, m, optionRegex)) {
-			// fprintf(stdout, "Option %s found:\n%s\n", option.c_str(), line.c_str());
-			if (m[1] != "\/\/")
-			{
-				optionEnabled = true;
-			}
+			result = true;
 		}
 	}
 
-	return optionEnabled;
+	return result;
 }
 
 std::string getDefineValue(std::string option, std::string path)
@@ -75,7 +70,7 @@ std::string getDefineValue(std::string option, std::string path)
 int main(int argc, char *argv[])
 {
 	// Error if the number of arguments is wrong - we expect four or five
-	if (argc < 6 || argc > 7)
+	if (argc < 5 || argc > 6)
 	{
 		fprintf(stderr, "ERROR: Incorrect number of arguments\n");
 		return -1;
@@ -93,13 +88,10 @@ int main(int argc, char *argv[])
 	// Arduino IDE Board name.
 	std::string multiBoard = argv[4];
 
-	// Debug flag from Arduino settings.
-	std::int16_t boardDebugFlag = std::stoi(argv[5]);
-
 	// Flag indicating whether or not the user selected to export the binary.
 	std::int16_t exportFlag = 0;
 
-	if (argc == 7 && std::string(argv[6]) == "EXPORT")
+	if (argc == 6 && std::string(argv[5]) == "EXPORT")
 	{
 		exportFlag = 1;
 	}
@@ -150,21 +142,12 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	// Path to the configuration file
-	std::string configPath = buildPath + "\\sketch\\_Config.h";
+	// Path to the preproc file
+	std::string preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
 
 	// Error if the source file doesn't exist
-	if (!std::filesystem::exists(configPath)) {
-		fprintf(stdout, "ERROR: %s does not exist\n", configPath.c_str());
-		return -1;
-	}
-
-	// Path to the Multiprotocol.ino.cpp file
-	std::string inoPath = buildPath + "\\sketch\\Multiprotocol.ino.cpp";
-
-	// Error if the source file doesn't exist
-	if (!std::filesystem::exists(inoPath)) {
-		fprintf(stdout, "ERROR: %s does not exist\n", inoPath.c_str());
+	if (!std::filesystem::exists(preprocPath)) {
+		fprintf(stdout, "ERROR: %s does not exist\n", preprocPath.c_str());
 		return -1;
 	}
 
@@ -185,13 +168,11 @@ int main(int argc, char *argv[])
 	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
 
 	// Variables for config lines we're interested in
-	bool checkForBootloaderEnabled = getBooleanConfigOption("CHECK_FOR_BOOTLOADER", configPath);
-	bool telemetryEnabled = getBooleanConfigOption("TELEMETRY", configPath);
-	bool multiStatusEnabled = getBooleanConfigOption("MULTI_STATUS", configPath);
-	bool multiTelemetryEnabled = getBooleanConfigOption("MULTI_TELEMETRY", configPath);
-	bool invertTelemetryEnabled = getBooleanConfigOption("INVERT_TELEMETRY", configPath);
-
-	bool debugSerialEnabled = getBooleanConfigOption("DEBUG_SERIAL", inoPath);
+	bool checkForBootloaderEnabled = FirmwareFlag("CHECK_FOR_BOOTLOADER", preprocPath);
+	bool multiStatusEnabled = FirmwareFlag("MULTI_STATUS", preprocPath);
+	bool multiTelemetryEnabled = FirmwareFlag("MULTI_TELEMETRY", preprocPath);
+	bool invertTelemetryEnabled = FirmwareFlag("INVERT_TELEMETRY", preprocPath);
+	bool debugSerialEnabled = FirmwareFlag("DEBUG_SERIAL", preprocPath);
 
 	std::string flag_BOOTLOADER_SUPPORT = "u";
 	if (multiBoard.find("MULTI_FLASH_FROM_TX=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0)
@@ -200,32 +181,24 @@ int main(int argc, char *argv[])
 	}
 
 	std::string flag_TELEMETRY_TYPE = "u";
-	if (telemetryEnabled)
+	if (!(multiStatusEnabled && multiTelemetryEnabled))
 	{
-		if ((multiStatusEnabled && multiTelemetryEnabled) || (!multiStatusEnabled && !multiTelemetryEnabled))
+		if (multiStatusEnabled)
 		{
-			flag_TELEMETRY_TYPE = "u";
+			flag_TELEMETRY_TYPE = "s";
 		}
-		else
+		if (multiTelemetryEnabled)
 		{
-			if (multiStatusEnabled)
-			{
-				flag_TELEMETRY_TYPE = "s";
-			}
-			if (multiTelemetryEnabled)
-			{
-				flag_TELEMETRY_TYPE = "t";
-			}
+			flag_TELEMETRY_TYPE = "t";
 		}
 	}
 
 	std::string flag_CHECK_FOR_BOOTLOADER = checkForBootloaderEnabled ? "c" : "u";
 	std::string flag_INVERT_TELEMTERY = invertTelemetryEnabled ? "i" : "u";
-
-	std::string flag_DebugBuild = debugSerialEnabled || boardDebugFlag > 0 ? "d" : "u";
+	std::string flag_DEBUG_SERIAL = debugSerialEnabled ? "d" : "u";
 
 	// The features for the signature
-	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY + flag_DebugBuild;
+	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY + flag_DEBUG_SERIAL;
 
 	// The version for the signature
 	std::string signatureVersionMajor = versionMajor.length() == 1 ? "0" + versionMajor : versionMajor;
@@ -235,10 +208,11 @@ int main(int argc, char *argv[])
 	std::string multiSignatureVersion = signatureVersionMajor + signatureVersionMinor + signatureVersionRevision + signatureVersionPatch;
 
 	// Assemble the signature for the.bin file
-	// Signature format is multi - [board type] - [bootloader support][check for bootloader][multi telemetry type][telemetry inversion] - [firmware version]
+	// Signature format is multi-[board type]-[bootloader support][check for bootloader][multi telemetry type][telemetry inversion][serial debug]-[firmware version]
+	// Length of signature must be divisible by four
 	std::string multiSignature = "multi-" + multiType + "-" + multiSignatureFlags + "-" + multiSignatureVersion;
 
-	// fprintf(stdout, "Firmware signature: %s\n", multiSignature.c_str());
+	//fprintf(stdout, "Firmware signature: %s\n", multiSignature.c_str());
 
 	// Filesystem paths to the default compiled firmware files in the build directory
 	std::filesystem::path binFileSource = buildPath + "\\" + projectName + + ".bin";
