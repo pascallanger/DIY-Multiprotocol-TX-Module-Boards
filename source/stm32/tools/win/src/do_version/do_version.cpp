@@ -23,7 +23,7 @@ bool FirmwareFlag(std::string flag, std::string path)
 	bool result = false;
 
 	// Regex to find the flag line
-	std::regex optionRegex ("^[ \t]*uint8_t[ \t]+firmwareFlag_" + flag + ".*$");
+	std::regex optionRegex ("^[ \t]*bool[ \t]+firmwareFlag_" + flag + ".*$");
 	
 	std::smatch m;
 
