@@ -76,7 +76,7 @@ multixmega32d4.bootloader.lock_bits=0xFF
 multixmega32d4.board.compiler.c.flags=-c -g -Os {compiler.warning_flags} -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto
 multixmega32d4.board.compiler.c.elf.flags=-Os -flto -Wl,--gc-sections
 multixmega32d4.board.compiler.S.flags=-c -g -x assembler-with-cpp -flto
-multixmega32d4.board.recipe.output.save_file=multi-orx.hex
+multixmega32d4.board.recipe.output.save_file=multi-orx.bin
 
 multixmega32d4.board.tools.avrdude.config.path={runtime.platform.path}/avrdude_xmega.conf
 multixmega32d4.board.tools.avrdude.erase.pattern="{cmd.path}" "-C{config.path}" {erase.verbose} -p{build.mcu} -c{protocol} {program.extra_params} -e -Ulock:w:{bootloader.unlock_bits}:m -Ufuse1:w:{bootloader.fuse1}:m -Ufuse2:w:{bootloader.fuse2}:m -Ufuse4:w:{bootloader.fuse4}:m -Ufuse5:w:{bootloader.fuse5}:m
