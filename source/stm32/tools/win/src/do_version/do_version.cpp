@@ -42,7 +42,7 @@ bool FirmwareFlag(std::string flag, std::string path)
 	return result;
 }
 
-std::string getDefineValue(std::string option, std::string path)
+std::string GetDefineValue(std::string option, std::string path)
 {
 	std::string result;
 
@@ -157,10 +157,10 @@ int main(int argc, char *argv[])
 	// Line in file
 	std::string line;
 
-	versionMajor = getDefineValue("VERSION_MAJOR", versionPath);
-	versionMinor = getDefineValue("VERSION_MINOR", versionPath);
-	versionRevision = getDefineValue("VERSION_REVISION", versionPath);
-	versionPatch = getDefineValue("VERSION_PATCH_LEVEL", versionPath);
+	versionMajor = GetDefineValue("VERSION_MAJOR", versionPath);
+	versionMinor = GetDefineValue("VERSION_MINOR", versionPath);
+	versionRevision = GetDefineValue("VERSION_REVISION", versionPath);
+	versionPatch = GetDefineValue("VERSION_PATCH_LEVEL", versionPath);
 
 	// The concatenated version number string
 	std::string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
@@ -225,12 +225,15 @@ int main(int argc, char *argv[])
 	// Create the versioned bin file if the source file exists
 	if (std::filesystem::exists(binFileSource))
 	{
-		// Append the signature in the bin file, if it exists
-		std::ofstream outfile;
-
-		outfile.open(binFileSource, std::ios_base::app);
-		outfile << multiSignature;
-		outfile.close();
+		// Only write the signature if we're not exporting (otherwise it gets written twice)
+		if (!exportFlag)
+		{
+			// Append the signature in the bin file, if it exists
+			std::ofstream outfile;
+			outfile.open(binFileSource, std::ios_base::app);
+			outfile << multiSignature;
+			outfile.close();
+		}
 
 		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
 		std::filesystem::copy_file(binFileSource, binFileDest, std::filesystem::copy_options::overwrite_existing);
