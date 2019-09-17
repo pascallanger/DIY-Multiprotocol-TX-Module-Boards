@@ -112,18 +112,20 @@ fi
 
 if [ $# -eq 5 ]; then
         if [ $EXPORT_FLAG == "EXPORT" ]; then
+                
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                fi
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                fi
+
                 if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.hex" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.hex"
-                fi
-                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.bin"
-                fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                 fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.bin" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                 fi
         fi
