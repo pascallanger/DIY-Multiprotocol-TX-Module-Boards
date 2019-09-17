@@ -85,7 +85,7 @@ fi
 SIG_DEBUG_SERIAL="u"
 grep -q firmwareFlag_DEBUG_SERIAL $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_DEBUG_SERIAL="i"
+        SIG_DEBUG_SERIAL="d"
 fi
 
 MULTI_SIG_FLAGS=$SIG_BOOTLOADER_SUPPORT$SIG_CHECK_FOR_BOOTLOADER$SIG_TELEMETRY_TYPE$SIG_INVERT_TELEMETRY$SIG_DEBUG_SERIAL
@@ -94,9 +94,12 @@ MULTI_SIG="multi-$MULTI_TYPE-$MULTI_SIG_FLAGS-$MULTI_SIG_VERSION"
 
 #echo "Multi Signaure: $MULTI_SIG"
 
-BINARY_FILE=$BUILD_PATH/$PROJECT_NAME.bin
-if [ -e $BINARY_FILE ]; then
-        printf $MULTI_SIG >> $BINARY_FILE
+# Don't re-write the signature if it's already there
+if [ -e $BUILD_PATH/$PROJECT_NAME.bin ]; then
+        grep -q $MULTI_SIG $BUILD_PATH/$PROJECT_NAME.bin
+        if [ $? -ne 0 ]; then
+                printf $MULTI_SIG >> $BUILD_PATH/$PROJECT_NAME.bin
+        fi
 fi
 
 if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
@@ -109,18 +112,20 @@ fi
 
 if [ $# -eq 5 ]; then
         if [ $EXPORT_FLAG == "EXPORT" ]; then
+                
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                fi
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                fi
+
                 if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.hex" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.hex"
-                fi
-                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.bin"
-                fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                 fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.bin" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                 fi
         fi
