@@ -85,7 +85,7 @@ fi
 SIG_DEBUG_SERIAL="u"
 grep -q firmwareFlag_DEBUG_SERIAL $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_DEBUG_SERIAL="i"
+        SIG_DEBUG_SERIAL="d"
 fi
 
 MULTI_SIG_FLAGS=$SIG_BOOTLOADER_SUPPORT$SIG_CHECK_FOR_BOOTLOADER$SIG_TELEMETRY_TYPE$SIG_INVERT_TELEMETRY$SIG_DEBUG_SERIAL
@@ -94,9 +94,12 @@ MULTI_SIG="multi-$MULTI_TYPE-$MULTI_SIG_FLAGS-$MULTI_SIG_VERSION"
 
 #echo "Multi Signaure: $MULTI_SIG"
 
-BINARY_FILE=$BUILD_PATH/$PROJECT_NAME.bin
-if [ -e $BINARY_FILE ]; then
-        printf $MULTI_SIG >> $BINARY_FILE
+# Don't re-write the signature if it's already there
+if [ -e $BUILD_PATH/$PROJECT_NAME.bin ]; then
+        grep -q $MULTI_SIG $BUILD_PATH/$PROJECT_NAME.bin
+        if [ $? -ne 0 ]; then
+                printf $MULTI_SIG >> $BUILD_PATH/$PROJECT_NAME.bin
+        fi
 fi
 
 if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
