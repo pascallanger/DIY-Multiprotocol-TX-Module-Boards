@@ -8,21 +8,22 @@ EXPORT_FLAG=$5
 
 IFS== read MULTI_BOARD BOARD_VERSION <<< "$MULTI_BOARD"
 
+SIG_BOOTLOADER_SUPPORT="u"
+
 case "$MULTI_BOARD" in
         MULTI_NO_BOOT)
                 MULTI_TYPE=avr
                 ;;
         MULTI_FLASH_FROM_TX)
                 MULTI_TYPE=avr
+                SIG_BOOTLOADER_SUPPORT="b"
                 ;;
         MULTI_STM32_NO_BOOT)
                 MULTI_TYPE=stm
                 ;;
         MULTI_STM32_WITH_BOOT)
                 MULTI_TYPE=stm
-                ;;
-        MULTI_STM32_FLASH_FROM_TX)
-                MULTI_TYPE=stm
+                SIG_BOOTLOADER_SUPPORT="b"
                 ;;
         MULTI_ORANGERX)
                 MULTI_TYPE=orx
@@ -36,14 +37,69 @@ esac
 #echo "Multi Board Type: $MULTI_TYPE"
 
 if [ -e "$BUILD_PATH/sketch/Multiprotocol.h" ]; then
-        MAJOR_VERSION=$(grep "VERSION_MAJOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{print $N}')
-        MINOR_VERSION=$(grep "VERSION_MINOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{print $N}')
-        REVISION_VERSION=$(grep "VERSION_REVISION" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{print $N}')
-        PATCH_VERSION=$(grep "VERSION_PATCH" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{print $N}')
-
+        MAJOR_VERSION=$(grep "VERSION_MAJOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
+        MINOR_VERSION=$(grep "VERSION_MINOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
+        REVISION_VERSION=$(grep "VERSION_REVISION" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
+        PATCH_VERSION=$(grep "VERSION_PATCH" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
         MULTI_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION
 else
         MULTI_VERSION=
+fi
+
+#echo "Multi Version: $MULTI_VERSION"
+
+PREPROC_PATH="$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp"
+
+SIG_CHECK_FOR_BOOTLOADER="u"
+grep -q firmwareFlag_CHECK_FOR_BOOTLOADER $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_CHECK_FOR_BOOTLOADER="c"
+fi
+
+SIG_MULTI_TELEMETRY=0
+grep -q firmwareFlag_MULTI_TELEMETRY $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_MULTI_TELEMETRY=1
+fi
+
+SIG_MULTI_STATUS=0
+grep -q firmwareFlag_MULTI_STATUS $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_MULTI_STATUS=1
+fi
+
+SIG_TELEMETRY_TYPE="u"
+if [[ SIG_MULTI_STATUS -gt SIG_MULTI_TELEMETRY ]]; then
+        SIG_TELEMETRY_TYPE="s"
+fi
+if [[ SIG_MULTI_TELEMETRY -gt SIG_MULTI_STATUS ]]; then
+        SIG_TELEMETRY_TYPE="t"
+fi
+
+SIG_INVERT_TELEMETRY="u"
+grep -q firmwareFlag_INVERT_TELEMETRY $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_INVERT_TELEMETRY="i"
+fi
+
+SIG_DEBUG_SERIAL="u"
+grep -q firmwareFlag_DEBUG_SERIAL $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_DEBUG_SERIAL="d"
+fi
+
+MULTI_SIG_FLAGS=$SIG_BOOTLOADER_SUPPORT$SIG_CHECK_FOR_BOOTLOADER$SIG_TELEMETRY_TYPE$SIG_INVERT_TELEMETRY$SIG_DEBUG_SERIAL
+MULTI_SIG_VERSION=$(printf "%02d%02d%02d%02d" $MAJOR_VERSION $MINOR_VERSION $REVISION_VERSION $PATCH_VERSION)
+MULTI_SIG="multi-$MULTI_TYPE-$MULTI_SIG_FLAGS-$MULTI_SIG_VERSION"
+
+#echo "Multi Signaure: $MULTI_SIG"
+
+# Don't re-write the signature if it's already there
+if [ -e $BUILD_PATH/$PROJECT_NAME.bin ]; then
+        grep -q $MULTI_SIG $BUILD_PATH/$PROJECT_NAME.bin
+        if [ $? -ne 0 ]; then
+                printf $MULTI_SIG >> $BUILD_PATH/$PROJECT_NAME.bin
+        fi
 fi
 
 if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
@@ -56,18 +112,20 @@ fi
 
 if [ $# -eq 5 ]; then
         if [ $EXPORT_FLAG == "EXPORT" ]; then
+                
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                fi
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin" ]; then
+                        rm "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                fi
+
                 if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.hex" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.hex"
-                fi
-                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
-                        rm "$SKETCH_PATH/multi-$MULTI_TYPE.bin"
-                fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.hex" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.hex" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.hex"
                 fi
-                if [ -e "$BUILD_PATH/$PROJECT_NAME.bin" ]; then
-                        cp "$BUILD_PATH/$PROJECT_NAME.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
+                if [ -e "$SKETCH_PATH/multi-$MULTI_TYPE.bin" ]; then
+                        mv "$SKETCH_PATH/multi-$MULTI_TYPE.bin" "$SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                         echo "Compiled firmware exported as $SKETCH_PATH/multi-$MULTI_TYPE-$MULTI_VERSION.bin"
                 fi
         fi
