@@ -37,10 +37,10 @@ esac
 #echo "Multi Board Type: $MULTI_TYPE"
 
 if [ -e "$BUILD_PATH/sketch/Multiprotocol.h" ]; then
-        MAJOR_VERSION=$(grep "VERSION_MAJOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
-        MINOR_VERSION=$(grep "VERSION_MINOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
-        REVISION_VERSION=$(grep "VERSION_REVISION" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
-        PATCH_VERSION=$(grep "VERSION_PATCH" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 'gsub(/\r{0,1}$/,""){print $N}')
+        MAJOR_VERSION=$(grep "VERSION_MAJOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+        MINOR_VERSION=$(grep "VERSION_MINOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+        REVISION_VERSION=$(grep "VERSION_REVISION" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+        PATCH_VERSION=$(grep "VERSION_PATCH" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
         MULTI_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION
 else
         MULTI_VERSION=
