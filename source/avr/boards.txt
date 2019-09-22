@@ -5,60 +5,68 @@
 
 menu.bootloader=Bootloader
 
-##############################################################
-## Multi 4-in-1 (3.3V, 16 MHz) w/ ATmega328p
-## --------------------------------------------------
+####################################################################
+##                    Multi 4-in-1 (Atmega328p)                   ##
+####################################################################
 multiatmega328p.name=Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)
 
-multiatmega328p.upload.tool=arduino:avrdude
-multiatmega328p.upload.protocol=arduino
-multiatmega328p.upload.speed=57600
-multiatmega328p.upload.maximum_data_size=2048
-
+# MCU and core settings
 multiatmega328p.build.mcu=atmega328p
 multiatmega328p.build.f_cpu=16000000L
 multiatmega328p.build.core=arduino:arduino
 multiatmega328p.build.variant=arduino:eightanaloginputs
-multiatmega328p.build.board=MULTI_AVR=109
 
+# Compiler recipes
 multiatmega328p.board.compiler.c.flags=-c -g -Os {compiler.warning_flags} -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects
 multiatmega328p.board.compiler.c.elf.flags=-Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -Wl,--relax
 multiatmega328p.board.compiler.S.flags=-c -g -x assembler-with-cpp -flto -MMD
 multiatmega328p.board.recipe.output.save_file=multi-avr.bin
-multiatmega328p.board.tools.avrdude.config.path={path}/etc/avrdude.conf
-multiatmega328p.board.tools.avrdude.erase.pattern="{cmd.path}" "-C{config.path}" {erase.verbose} -p{build.mcu} -c{protocol} {program.extra_params} -e -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m
-multiatmega328p.board.tools.avrdude.bootloader.pattern="{cmd.path}" "-C{config.path}" {bootloader.verbose} -p{build.mcu} -c{protocol} {program.extra_params} "-Uflash:w:{runtime.platform.path}/bootloaders/{bootloader.file}:i" -Ulock:w:{bootloader.lock_bits}:m
 
-multiatmega328p.bootloader.tool=arduino:avrdude
+# Bootloader tool and fuses
+multiatmega328p.bootloader.tool=multi_avrdude
+multiatmega328p.bootloader.protocol=usbasp
 multiatmega328p.bootloader.low_fuses=0xFF
 multiatmega328p.bootloader.extended_fuses=0xFD
 multiatmega328p.bootloader.unlock_bits=0x3F
 multiatmega328p.bootloader.lock_bits=0x0F
 
+# Upload tool settings
+multiatmega328p.upload.protocol=usbasp
+multiatmega328p.upload.tool=multi_avrdude
+multiatmega328p.upload.maximum_data_size=2048
+
+# Programmer tool settings
+multiatmega328p.program.protocol=usbasp
+multiatmega328p.program.tool=multi_avrdude
+multiatmega328p.program.maximum_data_size=2048
+
+## Settings which will be overridden by the bootloader option
+multiatmega328p.bootloader.file=Multi4in1/AtmegaMultiEmpty.hex
+multiatmega328p.bootloader.high_fuses=0xD7
+multiatmega328p.build.board=MULTI_NO_BOOT=110
+multiatmega328p.upload.maximum_size=32744
+multiatmega328p.board.tools.multi_avrdude.upload.pattern="{cmd.path}" "-C{config.path}" {upload.verbose} {upload.verify} -p{build.mcu} -c{upload.protocol} -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.hex:i"
+multiatmega328p.board.tools.multi_avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} {program.verify} -p{build.mcu} -c{program.protocol} -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.hex:i"
+
+## Menu entry for the No Bootloader option
 multiatmega328p.menu.bootloader.none=No bootloader
-multiatmega328p.menu.bootloader.none.build.board=MULTI_NO_BOOT=109
-multiatmega328p.menu.bootloader.none.upload.maximum_size=32744
-multiatmega328p.menu.bootloader.none.bootloader.file=Multi4in1/AtmegaMultiEmpty.hex
-multiatmega328p.menu.bootloader.none.bootloader.high_fuses=0xD7
 
-multiatmega328p.menu.bootloader.none.board.tools.avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} {program.verify} -p{build.mcu} -c{protocol} {program.extra_params} -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.hex:i"
-
+## Overrides for the Optiboot bootloader option
 multiatmega328p.menu.bootloader.optiboot=Flash from TX
-multiatmega328p.menu.bootloader.optiboot.build.board=MULTI_FLASH_FROM_TX=109
-multiatmega328p.menu.bootloader.optiboot.upload.maximum_size=32232
 multiatmega328p.menu.bootloader.optiboot.bootloader.file=Multi4in1/AtmegaMultiBoot.hex
 multiatmega328p.menu.bootloader.optiboot.bootloader.high_fuses=0xD6
+multiatmega328p.menu.bootloader.optiboot.build.board=MULTI_FLASH_FROM_TX=110
+multiatmega328p.menu.bootloader.optiboot.upload.maximum_size=32232
+multiatmega328p.menu.bootloader.optiboot.board.tools.multi_avrdude.upload.pattern="{cmd.path}" "-C{config.path}" {upload.verbose} {upload.verify} -p{build.mcu} -c{upload.protocol} -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.with_bootloader.hex:i" -Ulock:w:{bootloader.lock_bits}:m
+multiatmega328p.menu.bootloader.optiboot.board.tools.multi_avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} {program.verify} -p{build.mcu} -c{program.protocol} -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.with_bootloader.hex:i" -Ulock:w:{bootloader.lock_bits}:m
 
-multiatmega328p.menu.bootloader.optiboot.board.tools.avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} {program.verify} -p{build.mcu} -c{protocol} {program.extra_params} -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m "-Uflash:w:{build.path}/{build.project_name}.with_bootloader.hex:i"
 
-##############################################################
-
-##############################################################
-## Multi 4-in-1 (OrangeRX)
-## --------------------------------------------------
+####################################################################
+##                     Multi 4-in-1 (OrangeRX)                    ##
+####################################################################
 multixmega32d4.name=Multi 4-in-1 (OrangeRX)
 
-multixmega32d4.build.board=MULTI_ORANGERX=109
+multixmega32d4.build.board=MULTI_ORANGERX=110
 multixmega32d4.build.mcu=atxmega32d4
 multixmega32d4.build.f_cpu=32000000L
 multixmega32d4.build.core=xmega
