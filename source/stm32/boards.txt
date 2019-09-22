@@ -33,7 +33,7 @@ multistm32f103c.bootloader.tool=serial_upload
 multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
 
 # Default settings which may be overridden by sub-menu choices
-multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=116
+multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=117
 multistm32f103c.build.ldscript=ld/bootloader_20.ld
 multistm32f103c.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
 multistm32f103c.build.vect=VECT_TAB_ADDR=0x8002000
@@ -63,7 +63,7 @@ multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
 # - Enables debugging in the Multimodule firmware
 # - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
 multistm32f103c.menu.debug_option.ftdi=Serial/FTDI Debugging
-multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=116
+multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=117
 multistm32f103c.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
 multistm32f103c.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
 multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
