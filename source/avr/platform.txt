@@ -6,7 +6,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
 
 name=Multi 4-in-1 AVR
-version=1.0.9
+version=1.1.0
 
 compiler.warning_flags=-w
 compiler.warning_flags.none=-w
@@ -103,39 +103,40 @@ recipe.hooks.savehex.postsavehex.01.pattern.linux="{runtime.platform.path}/tools
 recipe.hooks.savehex.postsavehex.01.pattern.linux64="{runtime.platform.path}/tools/linux64/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
 recipe.hooks.savehex.postsavehex.01.pattern.macosx="{runtime.platform.path}/tools/macosx/do_version" "{build.path}" "{build.project_name}" "{build.source.path}" {build.board} EXPORT
 
-# AVR Uploader/Programmers tools
-# ------------------------------
+# ----------------------- Custom Multi 4-in-1 Avrdude Programmer --------------------#
+# We use our own upload tool so that we can customizes the command line patterns to
+# write the hex file containing the bootloader automatically when it is required.
+#
+# This saves the user having to run 'Burn bootloader' in the IDE and then flash the 
+# module using another tool.
+#
+# Additional parameters are imported from boards.txt, depending on the bootloader option.
+#
 
-tools.avrdude.path={runtime.tools.avrdude.path}
-tools.avrdude.cmd.path={path}/bin/avrdude
-tools.avrdude.config.path={board.tools.avrdude.config.path}
+# General Tool Settings
+tools.multi_avrdude.path={runtime.tools.avrdude.path}
+tools.multi_avrdude.cmd.path={path}/bin/avrdude
+tools.multi_avrdude.config.path={path}/etc/avrdude.conf
 
-tools.avrdude.upload.params.verbose=-v
-tools.avrdude.upload.params.quiet=-q -q
-# tools.avrdude.upload.verify is needed for backwards compatibility with IDE 1.6.8 or older, IDE 1.6.9 or newer overrides this value
-tools.avrdude.upload.verify=
-tools.avrdude.upload.params.noverify=-V
-tools.avrdude.upload.pattern="{cmd.path}" "-C{config.path}" {upload.verbose} {upload.verify} -p{build.mcu} -c{upload.protocol} "-P{serial.port}" -b{upload.speed} -D "-Uflash:w:{build.path}/{build.project_name}.hex:i"
+# Upload Settings
+tools.multi_avrdude.upload.params.verbose=-v
+tools.multi_avrdude.upload.params.quiet=-q -q
+tools.multi_avrdude.upload.params.noverify=-V
+tools.multi_avrdude.upload.pattern={board.tools.multi_avrdude.upload.pattern}
 
-tools.avrdude.program.params.verbose=-v
-tools.avrdude.program.params.quiet=-q -q
-# tools.avrdude.program.verify is needed for backwards compatibility with IDE 1.6.8 or older, IDE 1.6.9 or newer overrides this value
-tools.avrdude.program.verify=
-tools.avrdude.program.params.noverify=-V
-# tools.avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} {program.verify} -p{build.mcu} -c{protocol} {program.extra_params} "-Uflash:w:{build.path}/{build.project_name}.hex:i"
-tools.avrdude.program.pattern={board.tools.avrdude.program.pattern}
-tools.avrdude.erase.params.verbose=-v
-tools.avrdude.erase.params.quiet=-q -q
-tools.avrdude.erase.pattern={board.tools.avrdude.erase.pattern}
+# Program Settings
+tools.multi_avrdude.program.params.verbose=-v
+tools.multi_avrdude.program.params.quiet=-q -q
+tools.multi_avrdude.program.params.noverify=-V
+tools.multi_avrdude.program.pattern={board.tools.multi_avrdude.program.pattern}
 
-tools.avrdude.bootloader.params.verbose=-v
-tools.avrdude.bootloader.params.quiet=-q -q
-tools.avrdude.bootloader.pattern={board.tools.avrdude.bootloader.pattern}
+# Erase Settings
+tools.multi_avrdude.erase.params.verbose=-v
+tools.multi_avrdude.erase.params.quiet=-q -q
+tools.multi_avrdude.erase.pattern="{cmd.path}" "-C{config.path}" {erase.verbose} -p{build.mcu} -c{protocol} {program.extra_params} -e -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m
 
-tools.avrdude_remote.upload.pattern=/usr/bin/run-avrdude /tmp/sketch.hex {upload.verbose} -p{build.mcu}
-
-# USB Default Flags
-# Default blank usb manufacturer will be filled in at compile time
-# - from numeric vendor ID, set to Unknown otherwise
-build.usb_manufacturer="Unknown"
-build.usb_flags=-DUSB_VID={build.vid} -DUSB_PID={build.pid} '-DUSB_MANUFACTURER={build.usb_manufacturer}' '-DUSB_PRODUCT={build.usb_product}'
+# Burn Bootloader Settings
+tools.multi_avrdude.bootloader.params.verbose=-v
+tools.multi_avrdude.bootloader.params.quiet=-q -q
+tools.multi_avrdude.bootloader.pattern={board.tools.multi_avrdude.bootloader.pattern}
+tools.multi_avrdude.bootloader.pattern="{cmd.path}" "-C{config.path}" {bootloader.verbose} -p{build.mcu} -c{protocol} "-Uflash:w:{runtime.platform.path}/bootloaders/{bootloader.file}:i" -Ulock:w:{bootloader.lock_bits}:m

@@ -1,6 +1,16 @@
+# ----------------------- Custom Multi 4-in-1 Avrdude Programmer --------------------#
+#
+# Required because the 'Upload using programmer' command lines for the default USBasp 
+# cannot be overridden by the board's config.
+# 
+# If this programmer is not used the bootloader will not be written to the module in
+# an 'Upload using programmer' operation.
+#
+
 usbasp.name=USBasp (Multi 4-in-1)
 usbasp.communication=usb
 usbasp.protocol=usbasp
 usbasp.program.protocol=usbasp
-usbasp.program.tool=avrdude
+usbasp.program.tool=multi_avrdude
 usbasp.program.extra_params=-Pusb
+usbasp.upload.extra_params=-Pusb
