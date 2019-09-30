@@ -9,62 +9,160 @@
 #include <filesystem>
 #include <regex>
 
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+using namespace std;
+
+string ReplaceAll(string str, const string& from, const string& to) {
 	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+	while ((start_pos = str.find(from, start_pos)) != string::npos) {
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
 	return str;
 }
 
-bool FirmwareFlag(std::string flag, std::string path)
+int FirmwareFlag(string flag, string path)
 {
-	bool result = false;
+	int result = 0;
+	bool found = false;
 
 	// Regex to find the flag line
-	std::regex optionRegex ("^[ \t]*bool[ \t]+firmwareFlag_" + flag + ".*$");
+	regex optionRegex ("^[ \t]*bool[ \t]+firmwareFlag_" + flag + ".*$");
 	
-	std::smatch m;
+	smatch m;
 
 	// Stream for the file
-	std::ifstream file(path);
+	ifstream file(path);
 
 	// Iterate through the file to find the flag we're interested in
-	std::string line;
-	while (getline(file, line) && !result) {
+	string line;
+	while (getline(file, line) && !found) {
 		
-		if (std::regex_search(line, m, optionRegex)) {
-			result = true;
+		if (regex_search(line, m, optionRegex)) {
+			result = 1;
+			found = true;
 		}
 	}
 
 	return result;
 }
 
-std::string GetDefineValue(std::string option, std::string path)
+string FirmwareChannelOrder(string path)
 {
-	std::string result;
+	bool found = false;
+	string result = "";
 
-	std::string line;
+	// Regex to find the channel order flag line
+	regex optionRegex("^[ \t]*bool[ \t]+firmwareFlag_ChannelOrder_([A-Z]{4}).*$");
+
+	smatch m;
+
+	// Stream for the file
+	ifstream file(path);
+
+	// Iterate through the file to find the flag we're interested in
+	string line;
+	while (getline(file, line) && !found) {
+
+		if (regex_search(line, m, optionRegex)) {
+			result = m[1];
+			found = true;
+		}
+	}
+
+	return result;
+}
+
+string ChannelOrderToBits(string channels)
+{
+	string result = "";
+	if (channels == "AETR")
+		result = "00000";
+	if (channels == "AERT")
+		result = "00001";
+	if (channels == "ARET")
+		result = "00010";
+	if (channels == "ARTE")
+		result = "00011";
+	if (channels == "ATRE")
+		result = "00100";
+	if (channels == "ATER")
+		result = "00101";
+	if (channels == "EATR")
+		result = "00110";
+	if (channels == "EART")
+		result = "00111";
+	if (channels == "ERAT")
+		result = "01000";
+	if (channels == "ERTA")
+		result = "01001";
+	if (channels == "ETRA")
+		result = "01010";
+	if (channels == "ETAR")
+		result = "01011";
+	if (channels == "TEAR")
+		result = "01100";
+	if (channels == "TERA")
+		result = "01101";
+	if (channels == "TREA")
+		result = "01110";
+	if (channels == "TRAE")
+		result = "01111";
+	if (channels == "TARE")
+		result = "10000";
+	if (channels == "TAER")
+		result = "10001";
+	if (channels == "RETA")
+		result = "10010";
+	if (channels == "REAT")
+		result = "10011";
+	if (channels == "RAET")
+		result = "10100";
+	if (channels == "RATE")
+		result = "10101";
+	if (channels == "RTAE")
+		result = "10110";
+	if (channels == "RTEA")
+		result = "10111";
+
+	return result;
+}
+
+string GetDefineValue(string option, string path)
+{
+	string result;
+
+	string line;
 
 	// Regex to find the #define line for the option
-	std::regex optionRegex("^\\s*#define\\s+" + option + "(?:[ \\t]+)([\\w \\t]+)(\\/\\/.*)?$");
+	regex optionRegex("^\\s*#define\\s+" + option + "(?:[ \\t]+)([\\w \\t]+)(\\/\\/.*)?$");
 
-	std::smatch m;
+	smatch m;
 
 	// Stream for the config file
-	std::ifstream file(path);
+	ifstream file(path);
 
 	// Iterate through the config file to find the config options we're interested in
 	while (getline(file, line)) {
 
-		if (std::regex_search(line, m, optionRegex)) {
+		if (regex_search(line, m, optionRegex)) {
 			result = m[1];
 		}
 	}
 
 	return result;
+}
+
+long BitsToDec(string bits)
+{
+	unsigned long value = 0;
+	int indexCounter = 0;
+	for (int i = bits.length() - 1; i >= 0; i--) {
+		if (bits[i] == '1') {
+			value += (unsigned long)pow(2, indexCounter);
+		}
+		indexCounter++;
+	}
+	return value;
 }
 
 int main(int argc, char *argv[])
@@ -77,42 +175,46 @@ int main(int argc, char *argv[])
 	}
 
 	// Path of the build directory.
-	std::string buildPath = ReplaceAll(argv[1],"\\\\","\\");
+	string buildPath = ReplaceAll(argv[1],"\\\\","\\");
 
 	// Name of the Arduino IDE project.
-	std::string projectName = argv[2];
+	string projectName = argv[2];
 
 	// Path to the source files.
-	std::string sketchPath = ReplaceAll(argv[3],"\\\\","\\");
+	string sketchPath = ReplaceAll(argv[3],"\\\\","\\");
 
 	// Arduino IDE Board name.
-	std::string multiBoard = argv[4];
+	string multiBoard = argv[4];
 
 	// Flag indicating whether or not the user selected to export the binary.
-	std::int16_t exportFlag = 0;
+	int16_t exportFlag = 0;
 
-	if (argc == 6 && std::string(argv[5]) == "EXPORT")
+	if (argc == 6 && string(argv[5]) == "EXPORT")
 	{
 		exportFlag = 1;
 	}
 	
 	// The type of Multi board (avr, stm, or orx).
-	std::string multiType;
+	string multiType;
+	string multiTypeBinString;
 
 	// Set the board type and file extension for AVR boards
 	if (multiBoard.find("MULTI_NO_BOOT=") == 0 || multiBoard.find("MULTI_FLASH_FROM_TX=") == 0)
 	{
 		multiType = "avr";
+		multiTypeBinString = "00";
 	}
 	// Set the board type and file extension for STM32 boards
 	else if (multiBoard.find("MULTI_STM32_NO_BOOT=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0 || multiBoard == "MULTI_STM32_FLASH_FROM_TX=")
 	{
 		multiType = "stm";
+		multiTypeBinString = "01";
 	}
 	// Set the board type and file extension for OrangeRX boards
 	else if (multiBoard.find("MULTI_ORANGERX=") == 0)
 	{
 		multiType = "orx";
+		multiTypeBinString = "10";
 	}
 	// Throw an error and quit for an unknown board
 	else
@@ -122,40 +224,40 @@ int main(int argc, char *argv[])
 	}
 	
 	// Major version number
-	std::string versionMajor;
+	string versionMajor;
 
 	// Minor version number
-	std::string versionMinor;
+	string versionMinor;
 
 	// Revision number
-	std::string versionRevision;
+	string versionRevision;
 
 	// Patch level
-	std::string versionPatch;
+	string versionPatch;
 
 	// Path to the source file where we'll find the version numbers
-	std::string versionPath = buildPath + "\\sketch\\Multiprotocol.h";
+	string versionPath = buildPath + "\\sketch\\Multiprotocol.h";
 
 	// Error if the source file doesn't exist
-	if (!std::filesystem::exists(versionPath)) {
+	if (!filesystem::exists(versionPath)) {
 		fprintf(stdout, "ERROR: %s does not exist\n", versionPath.c_str());
 		return -1;
 	}
 
 	// Path to the preproc file
-	std::string preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
+	string preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
 
 	// Error if the source file doesn't exist
-	if (!std::filesystem::exists(preprocPath)) {
+	if (!filesystem::exists(preprocPath)) {
 		fprintf(stdout, "ERROR: %s does not exist\n", preprocPath.c_str());
 		return -1;
 	}
 
 	// Stream for the file with version numbers
-	std::ifstream versionFile(versionPath);
+	ifstream versionFile(versionPath);
 	
 	// Line in file
-	std::string line;
+	string line;
 
 	versionMajor = GetDefineValue("VERSION_MAJOR", versionPath);
 	versionMinor = GetDefineValue("VERSION_MINOR", versionPath);
@@ -163,132 +265,137 @@ int main(int argc, char *argv[])
 	versionPatch = GetDefineValue("VERSION_PATCH_LEVEL", versionPath);
 
 	// The concatenated version number string
-	std::string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
+	string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
 
 	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
 
-	// Variables for config lines we're interested in
-	bool checkForBootloaderEnabled = FirmwareFlag("CHECK_FOR_BOOTLOADER", preprocPath);
-	bool multiStatusEnabled = FirmwareFlag("MULTI_STATUS", preprocPath);
-	bool multiTelemetryEnabled = FirmwareFlag("MULTI_TELEMETRY", preprocPath);
-	bool invertTelemetryEnabled = FirmwareFlag("INVERT_TELEMETRY", preprocPath);
-	bool debugSerialEnabled = FirmwareFlag("DEBUG_SERIAL", preprocPath);
+	// Get the channel order as a bit string
+	string channelOrderString = FirmwareChannelOrder(preprocPath);
+	string channelOrderBits = ChannelOrderToBits(channelOrderString);
 
-	std::string flag_BOOTLOADER_SUPPORT = "u";
+	// Binary values the for config lines we're interested in
+	int checkForBootloader = FirmwareFlag("CHECK_FOR_BOOTLOADER", preprocPath);
+	int invertTelemetry = FirmwareFlag("INVERT_TELEMETRY", preprocPath);
+	int multiStatus = FirmwareFlag("MULTI_STATUS", preprocPath);
+	int multiTelemetry = FirmwareFlag("MULTI_TELEMETRY", preprocPath);
+	int debugSerial = FirmwareFlag("DEBUG_SERIAL", preprocPath);
+
+	string bootloaderSupport = "0";
 	if (multiBoard.find("MULTI_FLASH_FROM_TX=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0)
 	{
-		flag_BOOTLOADER_SUPPORT = "b";
+		bootloaderSupport = "1";
 	}
 
-	std::string flag_TELEMETRY_TYPE = "u";
-	if (!(multiStatusEnabled && multiTelemetryEnabled))
-	{
-		if (multiStatusEnabled)
-		{
-			flag_TELEMETRY_TYPE = "s";
-		}
-		if (multiTelemetryEnabled)
-		{
-			flag_TELEMETRY_TYPE = "t";
-		}
-	}
+	// Assemble the binary string of configuration options and features for the signature
+	string multiSignatureFlagsBinString = to_string(debugSerial) + to_string(multiTelemetry) + to_string(multiStatus) + to_string(invertTelemetry) + to_string(checkForBootloader) + bootloaderSupport + channelOrderBits + multiTypeBinString;
 
-	std::string flag_CHECK_FOR_BOOTLOADER = checkForBootloaderEnabled ? "c" : "u";
-	std::string flag_INVERT_TELEMTERY = invertTelemetryEnabled ? "i" : "u";
-	std::string flag_DEBUG_SERIAL = debugSerialEnabled ? "d" : "u";
+	// Convert the binary string to a decimal number
+	unsigned long multiSignatureFlagsDec = BitsToDec(multiSignatureFlagsBinString);
 
-	// The features for the signature
-	std::string multiSignatureFlags = flag_BOOTLOADER_SUPPORT + flag_CHECK_FOR_BOOTLOADER + flag_TELEMETRY_TYPE + flag_INVERT_TELEMTERY + flag_DEBUG_SERIAL;
+	// Char array to store the hex
+	char multiSignatureFlagsHex[9];
+
+	// Null-terminate the new array before we use it
+	multiSignatureFlagsHex[0] = '\0';
+
+	// Convert the decimal to hex; populate the array
+	_itoa_s(multiSignatureFlagsDec, multiSignatureFlagsHex, 16);
+
+	// Convert the hex value array to a string
+	string multiSignatureFlagsHexString(multiSignatureFlagsHex);
+	
+	// Pad the hex string to 8 characters
+	multiSignatureFlagsHexString = string(8 - multiSignatureFlagsHexString.length(), '0') + multiSignatureFlagsHexString;
 
 	// The version for the signature
-	std::string signatureVersionMajor = versionMajor.length() == 1 ? "0" + versionMajor : versionMajor;
-	std::string signatureVersionMinor = versionMinor.length() == 1 ? "0" + versionMinor : versionMinor;
-	std::string signatureVersionRevision = versionRevision.length() == 1 ? "0" + versionRevision : versionRevision;
-	std::string signatureVersionPatch = versionPatch.length() == 1 ? "0" + versionPatch : versionPatch;
-	std::string multiSignatureVersion = signatureVersionMajor + signatureVersionMinor + signatureVersionRevision + signatureVersionPatch;
+	string signatureVersionMajor = versionMajor.length() == 1 ? "0" + versionMajor : versionMajor;
+	string signatureVersionMinor = versionMinor.length() == 1 ? "0" + versionMinor : versionMinor;
+	string signatureVersionRevision = versionRevision.length() == 1 ? "0" + versionRevision : versionRevision;
+	string signatureVersionPatch = versionPatch.length() == 1 ? "0" + versionPatch : versionPatch;
+	string multiSignatureVersion = signatureVersionMajor + signatureVersionMinor + signatureVersionRevision + signatureVersionPatch;
 
 	// Assemble the signature for the.bin file
-	// Signature format is multi-[board type]-[bootloader support][check for bootloader][multi telemetry type][telemetry inversion][serial debug]-[firmware version]
+	// Signature format is multi-x[hex vlue of option bitmask]-[firmware version]
 	// Length of signature must be divisible by four
-	std::string multiSignature = "multi-" + multiType + "-" + multiSignatureFlags + "-" + multiSignatureVersion;
+	string multiSignature = "multi-x" + multiSignatureFlagsHexString + "-" + multiSignatureVersion;
 
 	//fprintf(stdout, "Firmware signature: %s\n", multiSignature.c_str());
 
 	// Filesystem paths to the default compiled firmware files in the build directory
-	std::filesystem::path binFileSource = buildPath + "\\" + projectName + + ".bin";
-	std::filesystem::path hexFileSource = buildPath + "\\" + projectName + +".hex";
+	filesystem::path binFileSource = buildPath + "\\" + projectName + + ".bin";
+	filesystem::path hexFileSource = buildPath + "\\" + projectName + +".hex";
 
 	// Filesystem path to the firmware file with module type and version number in the name
-	std::filesystem::path binFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
-	std::filesystem::path hexFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
+	filesystem::path binFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
+	filesystem::path hexFileDest = buildPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
 
 	// Create the versioned bin file if the source file exists
-	if (std::filesystem::exists(binFileSource))
+	if (filesystem::exists(binFileSource))
 	{
 		// Only write the signature if we're not exporting (otherwise it gets written twice)
 		if (!exportFlag)
 		{
 			// Append the signature in the bin file, if it exists
-			std::ofstream outfile;
-			outfile.open(binFileSource, std::ios_base::app);
+			ofstream outfile;
+			outfile.open(binFileSource, ios_base::app);
 			outfile << multiSignature;
 			outfile.close();
 		}
 
 		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
-		std::filesystem::copy_file(binFileSource, binFileDest, std::filesystem::copy_options::overwrite_existing);
+		filesystem::copy_file(binFileSource, binFileDest, filesystem::copy_options::overwrite_existing);
 	}
 
 	// Create the versioned hex file if the source file exists
-	if (std::filesystem::exists(hexFileSource))
+	if (filesystem::exists(hexFileSource))
 	{
 		// Copy the firmware file built by the IDE to the versioned name (in the build directory)
-		std::filesystem::copy_file(hexFileSource, hexFileDest, std::filesystem::copy_options::overwrite_existing);
+		filesystem::copy_file(hexFileSource, hexFileDest, filesystem::copy_options::overwrite_existing);
 	}
 
 	// If we're exporting do a few extra steps
 	if (exportFlag)
 	{
 		// Filesystem path to the default export file created by the IDE in the build path
-		std::filesystem::path binExportPath = sketchPath + "\\multi-" + multiType + ".bin";
-		std::filesystem::path hexExportPath = sketchPath + "\\multi-" + multiType + ".hex";
+		filesystem::path binExportPath = sketchPath + "\\multi-" + multiType + ".bin";
+		filesystem::path hexExportPath = sketchPath + "\\multi-" + multiType + ".hex";
 		
 		// Filesystem path for the export file with module type and version number we will export to the sketch path
-		std::filesystem::path binExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
-		std::filesystem::path hexExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
+		filesystem::path binExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".bin";
+		filesystem::path hexExportDest = sketchPath + "\\multi-" + multiType + "-" + multiVersion + ".hex";
 		
 		// Remove existing versioned files
-		if (std::filesystem::exists(binExportDest))
+		if (filesystem::exists(binExportDest))
 		{
-			std::filesystem::remove(binExportDest);
+			filesystem::remove(binExportDest);
 		}
-		if (std::filesystem::exists(hexExportDest))
+		if (filesystem::exists(hexExportDest))
 		{
-			std::filesystem::remove(hexExportDest);
+			filesystem::remove(hexExportDest);
 		}
 
 		// Rename the export file created by the IDE in the sketch directory to the versioned name
-		if (std::filesystem::exists(binExportPath))
+		if (filesystem::exists(binExportPath))
 		{
-			std::filesystem::rename(binExportPath, binExportDest);
+			filesystem::rename(binExportPath, binExportDest);
 		}
-		if (std::filesystem::exists(hexExportPath))
+		if (filesystem::exists(hexExportPath))
 		{
-			std::filesystem::rename(hexExportPath, hexExportDest);
+			filesystem::rename(hexExportPath, hexExportDest);
 		}
 
 		// Tell the user what we exported
-		if (std::filesystem::exists(binExportDest) && std::filesystem::exists(hexExportDest))
+		if (filesystem::exists(binExportDest) && filesystem::exists(hexExportDest))
 		{
 			fprintf(stdout, "\nCompiled firmware exported as \"%s\" and \"%s\"\n", binExportDest.string().c_str(), hexExportDest.string().c_str());
 		}
 		else
 		{
-			if (std::filesystem::exists(binExportDest))
+			if (filesystem::exists(binExportDest))
 			{
 				fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", binExportDest.string().c_str());
 			}
-			if (std::filesystem::exists(hexExportDest))
+			if (filesystem::exists(hexExportDest))
 			{
 				fprintf(stdout, "\nCompiled firmware exported as \"%s\"\n", hexExportDest.string().c_str());
 			}
