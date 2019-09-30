@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>C:\Users\blye\AppData\Local\Temp\arduino_build_935682 Multiprotocol.ino C:\Users\blye\GitHub\DIY-Multiprotocol-TX-Module\Multiprotocol MULTI_STM32_WITH_BOOT=115 EXPORT </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>C:\Users\blye\AppData\Local\Temp\arduino_build_653616 Multiprotocol.ino C:\Users\blye\GitHub\DIY-Multiprotocol-TX-Module\Multiprotocol MULTI_STM32_WITH_BOOT=115 EXPORT </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
