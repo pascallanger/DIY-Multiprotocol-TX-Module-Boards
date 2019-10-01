@@ -6,35 +6,72 @@ SKETCH_PATH=$3
 MULTI_BOARD=$4
 EXPORT_FLAG=$5
 
+DEBUG=false
+
 IFS== read MULTI_BOARD BOARD_VERSION <<< "$MULTI_BOARD"
 
-SIG_BOOTLOADER_SUPPORT="u"
+SIG_BOOTLOADER_SUPPORT=0
 
 case "$MULTI_BOARD" in
         MULTI_NO_BOOT)
                 MULTI_TYPE=avr
+                SIG_MULTI_TYPE=00
                 ;;
         MULTI_FLASH_FROM_TX)
                 MULTI_TYPE=avr
-                SIG_BOOTLOADER_SUPPORT="b"
+                SIG_MULTI_TYPE=00
+                SIG_BOOTLOADER_SUPPORT=1
                 ;;
         MULTI_STM32_NO_BOOT)
                 MULTI_TYPE=stm
+                SIG_MULTI_TYPE=01
                 ;;
         MULTI_STM32_WITH_BOOT)
                 MULTI_TYPE=stm
-                SIG_BOOTLOADER_SUPPORT="b"
+                SIG_MULTI_TYPE=01
+                SIG_BOOTLOADER_SUPPORT=1
                 ;;
         MULTI_ORANGERX)
                 MULTI_TYPE=orx
+                SIG_MULTI_TYPE=10
                 ;;
 esac
 
-#echo "Build Path: $BUILD_PATH"
-#echo "Sketch Path: $SKETCH_PATH"
-#echo "Project Name: $PROJECT_NAME"
-#echo "Multi Board: $MULTI_BOARD"
-#echo "Multi Board Type: $MULTI_TYPE"
+ChannelOrderBitsFromString()
+{
+        if [ "$CHANNEL_ORDER_STRING" == "AETR" ]; then echo "00000"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "AERT" ]; then echo "00001"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ARET" ]; then echo "00010"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ARTE" ]; then echo "00011"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ATRE" ]; then echo "00100"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ATER" ]; then echo "00101"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "EATR" ]; then echo "00110"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "EART" ]; then echo "00111"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ERAT" ]; then echo "01000"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ERTA" ]; then echo "01001"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ETRA" ]; then echo "01010"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "ETAR" ]; then echo "01011"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TEAR" ]; then echo "01100"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TERA" ]; then echo "01101"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TREA" ]; then echo "01110"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TRAE" ]; then echo "01111"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TARE" ]; then echo "10000"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "TAER" ]; then echo "10001"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "RETA" ]; then echo "10010"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "REAT" ]; then echo "10011"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "RAET" ]; then echo "10100"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "RATE" ]; then echo "10101"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "RTAE" ]; then echo "10110"; fi
+        if [ "$CHANNEL_ORDER_STRING" == "RTEA" ]; then echo "10111"; fi
+}
+
+if [ $DEBUG == true ]; then 
+        echo "Build Path: $BUILD_PATH";
+        echo "Sketch Path: $SKETCH_PATH";
+        echo "Project Name: $PROJECT_NAME";
+        echo "Multi Board: $MULTI_BOARD";
+        echo "Multi Board Type: $MULTI_TYPE";
+fi
 
 if [ -e "$BUILD_PATH/sketch/Multiprotocol.h" ]; then
         MAJOR_VERSION=$(grep "VERSION_MAJOR" "$BUILD_PATH/sketch/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
@@ -46,20 +83,38 @@ else
         MULTI_VERSION=
 fi
 
-#echo "Multi Version: $MULTI_VERSION"
+if [ $DEBUG == true ]; then
+        echo "Multi Version: $MULTI_VERSION"
+fi
 
 PREPROC_PATH="$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp"
 
-SIG_CHECK_FOR_BOOTLOADER="u"
-grep -q firmwareFlag_CHECK_FOR_BOOTLOADER $PREPROC_PATH
+# Find the channel order
+SIG_CHANNEL_ORDER=11111
+grep -q firmwareFlag_ChannelOrder $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_CHECK_FOR_BOOTLOADER="c"
+        CHANNEL_ORDER_LINE=$(grep firmwareFlag_ChannelOrder $PREPROC_PATH)
+        CHANNEL_ORDER_STRING=`echo "$CHANNEL_ORDER_LINE" | sed 's/.* firmwareFlag_ChannelOrder_\([AETR][AETR][AETR][AETR]\) .*/\1/'`
+        CHANNEL_ORDER_BITS=$(ChannelOrderBitsFromString)
+        if [ "x$CHANNEL_ORDER_BITS" != "x" ]; then
+                SIG_CHANNEL_ORDER=$(ChannelOrderBitsFromString)
+        fi
 fi
 
-SIG_MULTI_TELEMETRY=0
-grep -q firmwareFlag_MULTI_TELEMETRY $PREPROC_PATH
+if [ $DEBUG == true ]; then
+        echo "Channel Order Bits: $SIG_CHANNEL_ORDER"
+fi
+
+SIG_CHECK_FOR_BOOTLOADER=0
+grep -q firmwareFlag_CHECK_FOR_BOOTLOADER $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_MULTI_TELEMETRY=1
+        SIG_CHECK_FOR_BOOTLOADER=1
+fi
+
+SIG_INVERT_TELEMETRY=0
+grep -q firmwareFlag_INVERT_TELEMETRY $PREPROC_PATH
+if [ $? -eq 0 ]; then
+        SIG_INVERT_TELEMETRY=1
 fi
 
 SIG_MULTI_STATUS=0
@@ -68,31 +123,32 @@ if [ $? -eq 0 ]; then
         SIG_MULTI_STATUS=1
 fi
 
-SIG_TELEMETRY_TYPE="u"
-if [[ SIG_MULTI_STATUS -gt SIG_MULTI_TELEMETRY ]]; then
-        SIG_TELEMETRY_TYPE="s"
-fi
-if [[ SIG_MULTI_TELEMETRY -gt SIG_MULTI_STATUS ]]; then
-        SIG_TELEMETRY_TYPE="t"
-fi
-
-SIG_INVERT_TELEMETRY="u"
-grep -q firmwareFlag_INVERT_TELEMETRY $PREPROC_PATH
+SIG_MULTI_TELEMETRY=0
+grep -q firmwareFlag_MULTI_TELEMETRY $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_INVERT_TELEMETRY="i"
+        SIG_MULTI_TELEMETRY=1
 fi
 
-SIG_DEBUG_SERIAL="u"
+SIG_DEBUG_SERIAL=0
 grep -q firmwareFlag_DEBUG_SERIAL $PREPROC_PATH
 if [ $? -eq 0 ]; then
-        SIG_DEBUG_SERIAL="d"
+        SIG_DEBUG_SERIAL=1
 fi
 
-MULTI_SIG_FLAGS=$SIG_BOOTLOADER_SUPPORT$SIG_CHECK_FOR_BOOTLOADER$SIG_TELEMETRY_TYPE$SIG_INVERT_TELEMETRY$SIG_DEBUG_SERIAL
-MULTI_SIG_VERSION=$(printf "%02d%02d%02d%02d" $MAJOR_VERSION $MINOR_VERSION $REVISION_VERSION $PATCH_VERSION)
-MULTI_SIG="multi-$MULTI_TYPE-$MULTI_SIG_FLAGS-$MULTI_SIG_VERSION"
+MULTI_SIG_FLAGS_BIN=$SIG_DEBUG_SERIAL$SIG_MULTI_TELEMETRY$SIG_MULTI_STATUS$SIG_INVERT_TELEMETRY$SIG_CHECK_FOR_BOOTLOADER$SIG_BOOTLOADER_SUPPORT$SIG_CHANNEL_ORDER$SIG_MULTI_TYPE
+MULTI_SIG_FLAGS_HEX=$(printf "%08x" $((2#$MULTI_SIG_FLAGS_BIN)))
 
-#echo "Multi Signaure: $MULTI_SIG"
+if [ $DEBUG == true ]; then
+        echo "Binary Signature Flags: $MULTI_SIG_FLAGS_BIN"
+        echo "Hex Signature Flags:    $MULTI_SIG_FLAGS_HEX"
+fi
+
+MULTI_SIG_VERSION=$(printf "%02d%02d%02d%02d" $MAJOR_VERSION $MINOR_VERSION $REVISION_VERSION $PATCH_VERSION)
+MULTI_SIG="multi-x$MULTI_SIG_FLAGS_HEX-$MULTI_SIG_VERSION"
+
+if [ $DEBUG == true ]; then
+        echo "Multi Signature: $MULTI_SIG"
+fi
 
 # Don't re-write the signature if it's already there
 if [ -e $BUILD_PATH/$PROJECT_NAME.bin ]; then
