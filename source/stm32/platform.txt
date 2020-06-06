@@ -1,12 +1,12 @@
 #
-# Customized for the STM32 multi 4-in-1 board.
+# Customized for STM32 MULTI-Modules.
 # Based on an STM32F103CB MCU.
 #
 # For more info:
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
 
-name=Multi 4-in-1 STM32
-version=1.1.7
+name=Multi X-in-1 STM32
+version=1.1.8
 
 compiler.warning_flags=-w -DDEBUG_LEVEL=DEBUG_NONE
 compiler.warning_flags.none=-w -DDEBUG_LEVEL=DEBUG_NONE
