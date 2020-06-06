@@ -33,7 +33,7 @@ multistm32f103c.bootloader.tool=serial_upload
 multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
 
 # Default settings which may be overridden by sub-menu choices
-multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=117
+multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=118
 multistm32f103c.build.ldscript=ld/bootloader_20.ld
 multistm32f103c.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER
 multistm32f103c.build.vect=VECT_TAB_ADDR=0x8002000
@@ -70,3 +70,38 @@ multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
 multistm32f103c.menu.debug_option.ftdi.upload.maximum_size=129000
 multistm32f103c.menu.debug_option.ftdi.upload.protocol=maple_serial
 multistm32f103c.menu.debug_option.ftdi.upload.tool=serial_upload
+
+####################################################################
+##                Multi 5-in-1 (Jumper T18 Internal)              ##
+####################################################################
+
+# Board name for the Boards menu
+multi5in1t18int.name=Multi 5-in-1 (Jumper T18 Internal)
+
+# Default settings which always apply to the board
+multi5in1t18int.vid.0=0x1EAF
+multi5in1t18int.pid.0=0x0004
+multi5in1t18int.build.core=maple
+multi5in1t18int.build.cpu_flags=-DMCU_STM32F103CB
+multi5in1t18int.build.f_cpu=72000000L
+multi5in1t18int.build.flags.optimize=-Os
+multi5in1t18int.build.flags.ldspecs=
+multi5in1t18int.build.variant=generic_stm32f103c
+multi5in1t18int.upload.altID=2
+multi5in1t18int.upload.auto_reset=true
+multi5in1t18int.upload.file_type=bin
+multi5in1t18int.upload.maximum_data_size=20480
+multi5in1t18int.upload.protocol=maple_dfu
+multi5in1t18int.upload.tool=maple_upload
+multi5in1t18int.upload.usbID=1EAF:0003
+multi5in1t18int.upload.use_1200bps_touch=false
+multi5in1t18int.bootloader.tool=serial_upload
+multi5in1t18int.bootloader.file=Multi4in1/StmMulti4in1.bin
+
+# Default settings which may be overridden by sub-menu choices
+multi5in1t18int.build.board=MULTI_STM32_WITH_BOOT=118
+multi5in1t18int.build.ldscript=ld/bootloader_20.ld
+multi5in1t18int.build.upload_flags=-DMULTI_5IN1_INTERNAL -DSERIAL_USB -DGENERIC_BOOTLOADER
+multi5in1t18int.build.vect=VECT_TAB_ADDR=0x8002000
+multi5in1t18int.upload.maximum_size=120808
+multi5in1t18int.upload.tool=auto_upload
