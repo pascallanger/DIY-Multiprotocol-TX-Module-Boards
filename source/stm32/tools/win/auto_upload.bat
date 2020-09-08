@@ -18,38 +18,40 @@ set blpath=%blpath:/=\%
 REM Look for a Maple USB device
 ECHO.
 ECHO Looking for Maple device ...
-maple_find.exe
+find-multi.exe
 ECHO.
 
-if %errorlevel% equ 0 (
-    GOTO USB_FLASH
-) else (
-    GOTO FTDI_CHECK
-)
+IF %ERRORLEVEL% GEQ 3 GOTO FTDI_CHECK
+IF %ERRORLEVEL% EQU 1 SET WAITCOM=0 && GOTO USB_FLASH
+IF %ERRORLEVEL% EQU 2 SET WAITCOM=1 && GOTO MAPLE_RESET
 
-:USB_FLASH
+:MAPLE_RESET
 ECHO Attempting to flash module via Maple USB ...
 ECHO maple-reset.exe %comport% 2000
 maple-reset.exe %comport% 2000
 ECHO.
+
+:USB_FLASH
 ECHO dfu-util-multi.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
 dfu-util-multi.exe -a 2 -d 1eaf:0003 -D "%fwpath%" -R
 
-REM Delay to wait for the board to reset
-REM Needed to prevent the Arduino IDE Serial Monitor from reconnecting before board has reset
-for /l %%x in (1, 1, 40) do (
-  ping -w 50 -n 1 192.0.2.1 > nul
-  mode %1 > nul
-  if ERRORLEVEL 0 (
-    ECHO.
-    ECHO Done.
-    ECHO.
-    GOTO :EOF
+IF %WAITCOM% EQU 1 (
+  REM Delay to wait for the board to reset
+  REM Needed to prevent the Arduino IDE Serial Monitor from reconnecting before board has reset
+  for /l %%x in (1, 1, 40) do (
+    ping -w 50 -n 1 192.0.2.1 > nul
+    mode %1 > nul
+    if ERRORLEVEL 0 (
+      ECHO.
+      ECHO Done.
+      ECHO.
+      GOTO :EOF
+    )
   )
+  ECHO.
+  ECHO Timeout waiting for %1
+  ECHO.
 )
-ECHO.
-ECHO Timeout waiting for %1
-ECHO.
 
 GOTO :EOF
 
