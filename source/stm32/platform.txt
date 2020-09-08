@@ -6,7 +6,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
 
 name=Multi X-in-1 STM32
-version=1.1.8
+version=1.2.0
 
 compiler.warning_flags=-w -DDEBUG_LEVEL=DEBUG_NONE
 compiler.warning_flags.none=-w -DDEBUG_LEVEL=DEBUG_NONE
@@ -46,7 +46,8 @@ build.error_led_pin=1
 build.cpu_flags=
 build.hs_flag=
 build.upload_flags=
-build.extra_flags= {build.upload_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags}
+build.serial_usb_flag=
+build.extra_flags= {build.serial_usb_flag} {build.upload_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags}
 
 # These can be overridden in platform.local.txt
 compiler.c.extra_flags=
