@@ -550,7 +550,7 @@
         }]
       },
       {
-        "name": "Multi X-in-1 STM32 Board",
+        "name": "Multi X-in-1 STM32 Boards",
         "architecture": "STM32F1",
         "version": "1.2.0",
         "category": "Contributed",
@@ -561,6 +561,28 @@
         "archiveFileName": "package_multi_4in1_stm32_board_v1.2.0.tar.gz",
         "checksum": "SHA-256:754f08ca2a553701cc9112b645c079b6041107f1bf863648305e560c136a6ac5",
         "size": "7496214",
+        "boards": [
+          {"name": "Multi 4-in-1 (STM32F103C)"},
+          {"name": "Multi 5-in-1 (Jumper T18 Internal)"}
+        ],
+        "toolsDependencies": [{
+          "packager": "arduino",
+          "name": "arm-none-eabi-gcc",
+          "version": "4.8.3-2014q1"
+        }]
+      },
+      {
+        "name": "Multi X-in-1 STM32 Boards",
+        "architecture": "STM32F1",
+        "version": "1.2.1",
+        "category": "Contributed",
+        "help": {
+          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
+        },
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/master/archives/package_multi_4in1_stm32_board_v1.2.1.tar.gz",
+        "archiveFileName": "package_multi_4in1_stm32_board_v1.2.1.tar.gz",
+        "checksum": "SHA-256:c66d34afadc5b21e9e28c4d477fa03a6d55db0b74b59ff2dcb07b4d6ef06da1a",
+        "size": "7496448",
         "boards": [
           {"name": "Multi 4-in-1 (STM32F103C)"},
           {"name": "Multi 5-in-1 (Jumper T18 Internal)"}
