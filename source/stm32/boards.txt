@@ -175,7 +175,7 @@ multistm32f103c8.menu.debug_option.ftdi.upload.tool=serial_upload
 ####################################################################
 
 # Board name for the Boards menu
-multi5in1t18int.name=Multi 5-in-1 (Jumper T18 Internal)
+multi5in1t18int.name=Jumper T18 Internal 5-in-1 Module
 
 # Default settings which always apply to the board
 multi5in1t18int.vid.0=0x1EAF
