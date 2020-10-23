@@ -3,100 +3,172 @@
 # https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards
 
 ####################################################################
-##                     Multi 4-in-1 (STM32F103C)                  ##
+##                    Multi X-in-1 (STM32F103CB)                  ##
 ####################################################################
 
 # Board name for the Boards menu
-multistm32f103c.name=Multi 4-in-1 (STM32F103C)
+multistm32f103cb.name=Multi X-in-1 STM32F103CB (128KB)
 
 # Additional IDE menu(s)
-menu.mcu_variant=MCU Variant
 menu.usb_support=USB Support
 menu.debug_option=Debug Option
 
 # Default settings which always apply to the board
-multistm32f103c.vid.0=0x1EAF
-multistm32f103c.pid.0=0x0004
-multistm32f103c.build.core=maple
+multistm32f103cb.vid.0=0x1EAF
+multistm32f103cb.pid.0=0x0004
+multistm32f103cb.build.core=maple
 
-multistm32f103c.build.f_cpu=72000000L
-multistm32f103c.build.flags.optimize=-Os
-multistm32f103c.build.flags.ldspecs=
-multistm32f103c.build.variant=generic_stm32f103c
-multistm32f103c.upload.altID=2
-multistm32f103c.upload.auto_reset=true
-multistm32f103c.upload.file_type=bin
-multistm32f103c.upload.maximum_data_size=20480
-multistm32f103c.upload.protocol=maple_dfu
-multistm32f103c.upload.tool=maple_upload
-multistm32f103c.upload.usbID=1EAF:0003
-multistm32f103c.upload.use_1200bps_touch=false
-multistm32f103c.bootloader.tool=serial_upload
-multistm32f103c.bootloader.file=Multi4in1/StmMulti4in1.bin
+multistm32f103cb.build.f_cpu=72000000L
+multistm32f103cb.build.flags.optimize=-Os
+multistm32f103cb.build.flags.ldspecs=
+multistm32f103cb.build.variant=generic_stm32f103c
+multistm32f103cb.upload.altID=2
+multistm32f103cb.upload.auto_reset=true
+multistm32f103cb.upload.file_type=bin
+multistm32f103cb.upload.maximum_data_size=20480
+multistm32f103cb.upload.protocol=maple_dfu
+multistm32f103cb.upload.tool=maple_upload
+multistm32f103cb.upload.usbID=1EAF:0003
+multistm32f103cb.upload.use_1200bps_touch=false
+multistm32f103cb.bootloader.tool=serial_upload
+multistm32f103cb.bootloader.file=Multi4in1/StmMulti4in1.bin
 
 # Default settings which may be overridden by sub-menu choices
-multistm32f103c.build.board=MULTI_STM32_WITH_BOOT=122
-multistm32f103c.build.cpu_flags=-DMCU_STM32F103CB
-multistm32f103c.build.ldscript=ld/bootloader_20.ld
-multistm32f103c.build.upload_flags=-DGENERIC_BOOTLOADER
-multistm32f103c.build.serial_usb_flag=
-multistm32f103c.build.vect=VECT_TAB_ADDR=0x8002000
-multistm32f103c.upload.maximum_size=120808
-multistm32f103c.upload.tool=auto_upload
-
-## MCU Variant menu options
-# STM32F103CB (128KB) - default option
-# - USB support is disabled in the firmware
-multistm32f103c.menu.mcu_variant.stm32f103cb=STM32F103CB (128KB)
-
-# STM32F103C8 (64KB)
-# - USB support is enabled in the firmware
-multistm32f103c.menu.mcu_variant.stm32f103c8=STM32F103C8 (64KB)
-multistm32f103c.menu.mcu_variant.stm32f103c8.build.cpu_flags=-DMCU_STM32F103C8
-multistm32f103c.menu.mcu_variant.stm32f103c8.upload.maximum_size=55272
+multistm32f103cb.build.board=MULTI_STM32_WITH_BOOT=122
+multistm32f103cb.build.cpu_flags=-DMCU_STM32F103CB
+multistm32f103cb.build.ldscript=ld/bootloader_20.ld
+multistm32f103cb.build.upload_flags=-DGENERIC_BOOTLOADER
+multistm32f103cb.build.serial_usb_flag=
+multistm32f103cb.build.vect=VECT_TAB_ADDR=0x8002000
+multistm32f103cb.upload.maximum_size=120808
+multistm32f103cb.upload.tool=auto_upload
 
 ## USB Support menu options
 # Disabled - default option
 # - USB support is disabled in the firmware
-multistm32f103c.menu.usb_support.disabled=Disabled
+multistm32f103cb.menu.usb_support.disabled=Disabled
 
 # Enabled
 # - USB support is enabled in the firmware
-multistm32f103c.menu.usb_support.enabled=Enabled
-multistm32f103c.menu.usb_support.enabled.build.serial_usb_flag=-DSERIAL_USB
+multistm32f103cb.menu.usb_support.enabled=Enabled
+multistm32f103cb.menu.usb_support.enabled.build.serial_usb_flag=-DSERIAL_USB
 
 ## Debug Option menu options
 # No Debugging - default option
 # - Uses the default board settings
 # - Builds firmware with support for the bootloader
 # - Uploads via native USB or FTDI
-multistm32f103c.menu.debug_option.none=None
+multistm32f103cb.menu.debug_option.none=None
 
 # Native USB Debugging - debugging for modules with a native USB port, e.g. iRangeX IRX4 Plus, Banggood, DIY, early JP4IN1
 # - Overrides build flags and upload method
 # - Builds firmware with support for the bootloader
 # - Enables debugging in the Multimodule firmware
 # - Forces upload via USB to prevent uploading to new JP4IN1 modules
-multistm32f103c.menu.debug_option.native=Native USB Debugging
-multistm32f103c.menu.debug_option.native.build.serial_usb_flag=-DSERIAL_USB
-multistm32f103c.menu.debug_option.native.build.upload_flags=-DGENERIC_BOOTLOADER -DARDUINO_MULTI_DEBUG
-multistm32f103c.menu.debug_option.native.upload.protocol=maple_dfu
-multistm32f103c.menu.debug_option.native.upload.tool=maple_upload
+multistm32f103cb.menu.debug_option.native=Native USB Debugging
+multistm32f103cb.menu.debug_option.native.build.serial_usb_flag=-DSERIAL_USB
+multistm32f103cb.menu.debug_option.native.build.upload_flags=-DGENERIC_BOOTLOADER -DARDUINO_MULTI_DEBUG
+multistm32f103cb.menu.debug_option.native.upload.protocol=maple_dfu
+multistm32f103cb.menu.debug_option.native.upload.tool=maple_upload
 
 # Serial/FTDI Debugging - debugging for use with newer JP4IN1 or any module with an external USB-to-serial adapter
 # - Overrides default board settings
 # - Builds firmware without support for the bootloader
 # - Enables debugging in the Multimodule firmware
 # - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
-multistm32f103c.menu.debug_option.ftdi=Serial/FTDI Debugging
-multistm32f103c.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=122
-multistm32f103c.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
-multistm32f103c.menu.debug_option.ftdi.build.serial_usb_flag=
-multistm32f103c.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
-multistm32f103c.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
-multistm32f103c.menu.debug_option.ftdi.upload.maximum_size=129000
-multistm32f103c.menu.debug_option.ftdi.upload.protocol=maple_serial
-multistm32f103c.menu.debug_option.ftdi.upload.tool=serial_upload
+multistm32f103cb.menu.debug_option.ftdi=Serial/FTDI Debugging
+multistm32f103cb.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=122
+multistm32f103cb.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
+multistm32f103cb.menu.debug_option.ftdi.build.serial_usb_flag=
+multistm32f103cb.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
+multistm32f103cb.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
+multistm32f103cb.menu.debug_option.ftdi.upload.maximum_size=129000
+multistm32f103cb.menu.debug_option.ftdi.upload.protocol=maple_serial
+multistm32f103cb.menu.debug_option.ftdi.upload.tool=serial_upload
+
+####################################################################
+##                    Multi X-in-1 (STM32F103C8)                  ##
+####################################################################
+
+# Board name for the Boards menu
+multistm32f103c8.name=Multi X-in-1 STM32F103C8 (64KB)
+
+# Additional IDE menu(s)
+menu.usb_support=USB Support
+menu.debug_option=Debug Option
+
+# Default settings which always apply to the board
+multistm32f103c8.vid.0=0x1EAF
+multistm32f103c8.pid.0=0x0004
+multistm32f103c8.build.core=maple
+
+multistm32f103c8.build.f_cpu=72000000L
+multistm32f103c8.build.flags.optimize=-Os
+multistm32f103c8.build.flags.ldspecs=
+multistm32f103c8.build.variant=generic_stm32f103c
+multistm32f103c8.upload.altID=2
+multistm32f103c8.upload.auto_reset=true
+multistm32f103c8.upload.file_type=bin
+multistm32f103c8.upload.maximum_data_size=20480
+multistm32f103c8.upload.protocol=maple_dfu
+multistm32f103c8.upload.tool=maple_upload
+multistm32f103c8.upload.usbID=1EAF:0003
+multistm32f103c8.upload.use_1200bps_touch=false
+multistm32f103c8.bootloader.tool=serial_upload
+multistm32f103c8.bootloader.file=Multi4in1/StmMulti4in1.bin
+
+# Default settings which may be overridden by sub-menu choices
+multistm32f103c8.build.board=MULTI_STM32_WITH_BOOT=122
+multistm32f103c8.build.cpu_flags=-DMCU_STM32F103C8
+multistm32f103c8.build.ldscript=ld/bootloader_20.ld
+multistm32f103c8.build.upload_flags=-DGENERIC_BOOTLOADER
+multistm32f103c8.build.serial_usb_flag=
+multistm32f103c8.build.vect=VECT_TAB_ADDR=0x8002000
+multistm32f103c8.upload.maximum_size=55272
+multistm32f103c8.upload.tool=auto_upload
+
+## USB Support menu options
+# Disabled - default option
+# - USB support is disabled in the firmware
+multistm32f103c8.menu.usb_support.disabled=Disabled
+
+# Enabled
+# - USB support is enabled in the firmware
+multistm32f103c8.menu.usb_support.enabled=Enabled
+multistm32f103c8.menu.usb_support.enabled.build.serial_usb_flag=-DSERIAL_USB
+
+## Debug Option menu options
+# No Debugging - default option
+# - Uses the default board settings
+# - Builds firmware with support for the bootloader
+# - Uploads via native USB or FTDI
+multistm32f103c8.menu.debug_option.none=None
+
+# Native USB Debugging - debugging for modules with a native USB port, e.g. iRangeX IRX4 Plus, Banggood, DIY, early JP4IN1
+# - Overrides build flags and upload method
+# - Builds firmware with support for the bootloader
+# - Enables debugging in the Multimodule firmware
+# - Forces upload via USB to prevent uploading to new JP4IN1 modules
+multistm32f103c8.menu.debug_option.native=Native USB Debugging
+multistm32f103c8.menu.debug_option.native.build.serial_usb_flag=-DSERIAL_USB
+multistm32f103c8.menu.debug_option.native.build.upload_flags=-DGENERIC_BOOTLOADER -DARDUINO_MULTI_DEBUG
+multistm32f103c8.menu.debug_option.native.upload.protocol=maple_dfu
+multistm32f103c8.menu.debug_option.native.upload.tool=maple_upload
+
+# Serial/FTDI Debugging - debugging for use with newer JP4IN1 or any module with an external USB-to-serial adapter
+# - Overrides default board settings
+# - Builds firmware without support for the bootloader
+# - Enables debugging in the Multimodule firmware
+# - Forces upload via FTDI to prevent uploading to modules with a USB bootloader installed
+multistm32f103c8.menu.debug_option.ftdi=Serial/FTDI Debugging
+multistm32f103c8.menu.debug_option.ftdi.build.board=MULTI_STM32_NO_BOOT=122
+multistm32f103c8.menu.debug_option.ftdi.build.ldscript=ld/jtag.ld
+multistm32f103c8.menu.debug_option.ftdi.build.serial_usb_flag=
+multistm32f103c8.menu.debug_option.ftdi.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG -DARDUINO_MULTI_DEBUG
+multistm32f103c8.menu.debug_option.ftdi.build.vect=VECT_TAB_ADDR=0x8000000
+multistm32f103c8.menu.debug_option.ftdi.upload.maximum_size=63464
+multistm32f103c8.menu.debug_option.ftdi.upload.protocol=maple_serial
+multistm32f103c8.menu.debug_option.ftdi.upload.tool=serial_upload
 
 ####################################################################
 ##                Multi 5-in-1 (Jumper T18 Internal)              ##
