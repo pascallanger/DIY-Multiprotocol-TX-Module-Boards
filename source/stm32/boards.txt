@@ -10,9 +10,9 @@
 multistm32f103c.name=Multi 4-in-1 (STM32F103C)
 
 # Additional IDE menu(s)
-menu.debug_option=Debug Option
-menu.usb_support=USB Support
 menu.mcu_variant=MCU Variant
+menu.usb_support=USB Support
+menu.debug_option=Debug Option
 
 # Default settings which always apply to the board
 multistm32f103c.vid.0=0x1EAF
