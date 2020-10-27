@@ -14,6 +14,8 @@ set fwpath=%fwpath:/=\%
 set blpath=%3
 set blpath=%blpath:/=\%
 
+set eraselen=%4
+
 :MAPLE_CHECK
 REM Look for a Maple USB device
 ECHO.
@@ -73,8 +75,8 @@ ECHO.
 ECHO Flashing module via FTDI adapter on %comport%
 ECHO.
 ECHO Erasing ...
-ECHO stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
-stm32flash.exe -o -S 0x8000000:129024 -b 115200 %comport%
+ECHO stm32flash.exe -o -S 0x8000000:%eraselen% -b 115200 %comport%
+stm32flash.exe -o -S 0x8000000:%eraselen% -b 115200 %comport%
 
 ECHO Writing bootloader ...
 ECHO stm32flash.exe -v -e 0 -g 0x8000000 -b 115200 -w %blpath% %comport%

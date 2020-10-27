@@ -10,9 +10,11 @@ rem The lines below are needed to fix path issues with incorrect slashes before 
 set fwpath=%3
 set fwpath=%fwpath:/=\%
 
+set eraselen=%4
+
 rem Erase the flash up to the EEPROM page
-echo stm32flash -o -S 0x8000000:129024 -b 115200 %1
-stm32flash -o -S 0x8000000:129024 -b 115200 %1
+echo stm32flash -o -S 0x8000000:%eraselen% -b 115200 %1
+stm32flash -o -S 0x8000000:%eraselen% -b 115200 %1
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 

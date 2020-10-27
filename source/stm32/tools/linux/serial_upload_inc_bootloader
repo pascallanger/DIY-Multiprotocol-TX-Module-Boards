@@ -6,6 +6,7 @@ port=$1
 addr=$2
 fwfile=$3
 bootloaderfile=$4
+eraselen=$5
 
 # Pick the correct flash tool for the system architecture
 uname -m | grep "x86_64" 2>&1 1>/dev/null
@@ -16,8 +17,8 @@ else
 fi
 
 # Erase the flash
-echo "$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
-"$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+echo "$STM_TOOL" -o -S 0x8000000:$eraselen -b 115200 /dev/"$port"
+"$STM_TOOL" -o -S 0x8000000:$eraselen -b 115200 /dev/"$port"
 
 # Write the bootloader
 echo "$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$bootloaderfile" /dev/"$port"
