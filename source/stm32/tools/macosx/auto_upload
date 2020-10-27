@@ -54,8 +54,8 @@ then
   # No maple board detected
   echo "Maple device not found. Attempting serial upload."
   SERIAL_UPLOAD=${DIR}/serial_upload_inc_bootloader
-  echo "${SERIAL_UPLOAD}" $1 0x8000000 $2 $3
-  "${SERIAL_UPLOAD}" $1 0x8000000 $2 $3
+  echo "${SERIAL_UPLOAD}" $1 0x8000000 $2 $3 $4
+  "${SERIAL_UPLOAD}" $1 0x8000000 $2 $3 $4
 
 else
   # Maple board detected

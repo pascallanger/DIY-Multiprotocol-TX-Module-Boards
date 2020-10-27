@@ -127,7 +127,7 @@ tools.auto_upload.path.linux={runtime.platform.path}/tools/linux
 tools.auto_upload.path.linux64={runtime.platform.path}/tools/linux64    
 tools.auto_upload.upload.params.verbose=-d
 tools.auto_upload.upload.params.quiet=
-tools.auto_upload.upload.pattern="{path}/{cmd}" {serial.port.file} "{build.path}/{build.project_name}.bin" "{runtime.platform.path}/bootloaders/{bootloader.file}"
+tools.auto_upload.upload.pattern="{path}/{cmd}" {serial.port.file} "{build.path}/{build.project_name}.bin" "{runtime.platform.path}/bootloaders/{bootloader.file}" {upload.erase_len}
 
 # Upload using Maple bootloader over DFU
 tools.maple_upload.cmd=maple_upload
@@ -150,7 +150,7 @@ tools.serial_upload.path.linux={runtime.platform.path}/tools/linux
 tools.serial_upload.path.linux64={runtime.platform.path}/tools/linux64
 tools.serial_upload.upload.params.verbose=-d
 tools.serial_upload.upload.params.quiet=n
-tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} 0x8000000 "{build.path}/{build.project_name}.bin"
+tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} 0x8000000 "{build.path}/{build.project_name}.bin" {upload.erase_len}
 
 tools.serial_upload.erase.params.verbose=
 tools.serial_upload.erase.params.quiet=
@@ -158,4 +158,4 @@ tools.serial_upload.erase.pattern=
 
 tools.serial_upload.bootloader.params.verbose=
 tools.serial_upload.bootloader.params.quiet=
-tools.serial_upload.bootloader.pattern="{path}/{cmd}" {serial.port.file} 0x0 "{runtime.platform.path}/bootloaders/{bootloader.file}"
+tools.serial_upload.bootloader.pattern="{path}/{cmd}" {serial.port.file} 0x0 "{runtime.platform.path}/bootloaders/{bootloader.file}" {upload.erase_len}

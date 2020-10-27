@@ -4,13 +4,14 @@
 port=$1
 addr=$2
 fwfile=$3
+eraselen=$4
 
 # Pick the correct flash tool for the system architecture
 STM_TOOL="$(dirname "$0")/stm32flash/stm32flash"
 
 # Erase the flash
-echo "$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
-"$STM_TOOL" -o -S 0x8000000:129024 -b 115200 /dev/"$port"
+echo "$STM_TOOL" -o -S 0x8000000:$eraselen -b 115200 /dev/"$port"
+"$STM_TOOL" -o -S 0x8000000:$eraselen -b 115200 /dev/"$port"
 
 # Write the firmware
 echo "$STM_TOOL" -v -e 0 -g 0x8000000 -b 115200 -w "$fwfile" /dev/"$port"
