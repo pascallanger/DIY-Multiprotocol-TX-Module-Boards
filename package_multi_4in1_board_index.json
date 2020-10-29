@@ -171,6 +171,24 @@
         "toolsDependencies": []
       },
       {
+        "name": "MULTI-Module AVR Boards",
+        "architecture": "avr",
+        "version": "1.1.1",
+        "category": "Contributed",
+        "help": {
+          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
+        },
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/master/archives/package_multi_4in1_avr_board_v1.1.1.tar.gz",
+        "archiveFileName": "package_multi_4in1_avr_board_v1.1.1.tar.gz",
+        "checksum": "SHA-256:2c3221d4ecdd67a053928c32916e9d13dab5fea095559431e1b7be8616644da0",
+        "size": "326146",
+        "boards": [
+          {"name": "Multi 4-in-1 (Atmega328p, 3.3V, 16MHz)"},
+          {"name": "Multi 4-in-1 (OrangeRX)"}
+        ],
+        "toolsDependencies": []
+      },
+      {
         "name": "Multi 4-in-1 STM32 Board",
         "architecture": "STM32F1",
         "version": "1.0.1",
@@ -585,6 +603,29 @@
         "size": "7496448",
         "boards": [
           {"name": "Multi 4-in-1 (STM32F103C)"},
+          {"name": "Multi 5-in-1 (Jumper T18 Internal)"}
+        ],
+        "toolsDependencies": [{
+          "packager": "arduino",
+          "name": "arm-none-eabi-gcc",
+          "version": "4.8.3-2014q1"
+        }]
+      },
+      {
+        "name": "MULTI-Module STM32 Boards",
+        "architecture": "STM32F1",
+        "version": "1.2.2",
+        "category": "Contributed",
+        "help": {
+          "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
+        },
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/master/archives/package_multi_4in1_stm32_board_v1.2.2.tar.gz",
+        "archiveFileName": "package_multi_4in1_stm32_board_v1.2.2.tar.gz",
+        "checksum": "SHA-256:7976e47f431609c04a01d5fa11dd97e51726cab9fdf592fadc0703ccb704d757",
+        "size": "7486303",
+        "boards": [
+          {"name": "Multi X-in-1 STM32F103CB (128KB)"},
+          {"name": "Multi X-in-1 STM32F103C8 (64KB)"},
           {"name": "Multi 5-in-1 (Jumper T18 Internal)"}
         ],
         "toolsDependencies": [{
