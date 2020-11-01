@@ -286,8 +286,23 @@ int main(int argc, char *argv[])
 		bootloaderSupport = "1";
 	}
 
+	// Board sub-types - STM32F103 boards
+	string multiSubTypeBinString;
+	if (FirmwareFlag("MCU_STM32F103CB", preprocPath) && !FirmwareFlag("MULTI_5IN1_INTERNAL", preprocPath))
+	{
+		multiSubTypeBinString = "00";
+	}
+	else if (FirmwareFlag("MCU_STM32F103C8", preprocPath))
+	{
+		multiSubTypeBinString = "01";
+	}
+	else if (FirmwareFlag("MULTI_5IN1_INTERNAL", preprocPath))
+	{
+		multiSubTypeBinString = "10";
+	}
+
 	// Assemble the binary string of configuration options and features for the signature
-	string multiSignatureFlagsBinString = to_string(debugSerial) + to_string(multiTelemetry) + to_string(multiStatus) + to_string(invertTelemetry) + to_string(checkForBootloader) + bootloaderSupport + channelOrderBits + multiTypeBinString;
+	string multiSignatureFlagsBinString = multiSubTypeBinString + to_string(debugSerial) + to_string(multiTelemetry) + to_string(multiStatus) + to_string(invertTelemetry) + to_string(checkForBootloader) + bootloaderSupport + channelOrderBits + multiTypeBinString;
 
 	// Convert the binary string to a decimal number
 	unsigned long multiSignatureFlagsDec = BitsToDec(multiSignatureFlagsBinString);
