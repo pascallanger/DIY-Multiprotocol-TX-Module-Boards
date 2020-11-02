@@ -135,7 +135,37 @@ if [ $? -eq 0 ]; then
         SIG_DEBUG_SERIAL=1
 fi
 
-MULTI_SIG_FLAGS_BIN=$SIG_DEBUG_SERIAL$SIG_MULTI_TELEMETRY$SIG_MULTI_STATUS$SIG_INVERT_TELEMETRY$SIG_CHECK_FOR_BOOTLOADER$SIG_BOOTLOADER_SUPPORT$SIG_CHANNEL_ORDER$SIG_MULTI_TYPE
+SIG_MODULE_SUB_TYPE=000
+if [ $SIG_MULTI_TYPE == 01 ]; then
+        MCU_STM32F103CB=false;
+        MCU_STM32F103C8=false;
+        MULTI_5IN1_INTERNAL=false
+
+        grep -q firmwareFlag_MCU_STM32F103CB $PREPROC_PATH
+        if [ $? -eq 0 ]; then
+                MCU_STM32F103CB=true;
+        fi
+        grep -q firmwareFlag_MCU_STM32F103C8 $PREPROC_PATH
+        if [ $? -eq 0 ]; then
+                MCU_STM32F103C8=true;
+        fi
+        grep -q firmwareFlag_MULTI_5IN1_INTERNAL $PREPROC_PATH
+        if [ $? -eq 0 ]; then
+                MULTI_5IN1_INTERNAL=true;
+        fi
+
+        if [ $MCU_STM32F103CB == true ] && [ $MULTI_5IN1_INTERNAL == false ]; then
+                SIG_MODULE_SUB_TYPE=000;
+        fi
+        if [ $MCU_STM32F103C8 == true ]; then
+                SIG_MODULE_SUB_TYPE=001;
+        fi
+        if [ $MCU_STM32F103CB == true ] && [ $MULTI_5IN1_INTERNAL == true ]; then
+                SIG_MODULE_SUB_TYPE=010;
+        fi
+fi
+
+MULTI_SIG_FLAGS_BIN=$SIG_MODULE_SUB_TYPE$SIG_DEBUG_SERIAL$SIG_MULTI_TELEMETRY$SIG_MULTI_STATUS$SIG_INVERT_TELEMETRY$SIG_CHECK_FOR_BOOTLOADER$SIG_BOOTLOADER_SUPPORT$SIG_CHANNEL_ORDER$SIG_MULTI_TYPE
 MULTI_SIG_FLAGS_HEX=$(printf "%08x" $((2#$MULTI_SIG_FLAGS_BIN)))
 
 if [ $DEBUG == true ]; then
