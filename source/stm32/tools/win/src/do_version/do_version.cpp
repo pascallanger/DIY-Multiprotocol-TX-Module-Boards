@@ -290,15 +290,15 @@ int main(int argc, char *argv[])
 	string multiSubTypeBinString;
 	if (FirmwareFlag("MCU_STM32F103CB", preprocPath) && !FirmwareFlag("MULTI_5IN1_INTERNAL", preprocPath))
 	{
-		multiSubTypeBinString = "00";
+		multiSubTypeBinString = "000";
 	}
 	else if (FirmwareFlag("MCU_STM32F103C8", preprocPath))
 	{
-		multiSubTypeBinString = "01";
+		multiSubTypeBinString = "001";
 	}
 	else if (FirmwareFlag("MULTI_5IN1_INTERNAL", preprocPath))
 	{
-		multiSubTypeBinString = "10";
+		multiSubTypeBinString = "010";
 	}
 
 	// Assemble the binary string of configuration options and features for the signature
