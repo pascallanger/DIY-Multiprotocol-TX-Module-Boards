@@ -6,7 +6,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
 
 name=MULTI-Module STM32 Boards
-version=1.2.2
+version=1.3.0
 
 compiler.warning_flags=-w -DDEBUG_LEVEL=DEBUG_NONE
 compiler.warning_flags.none=-w -DDEBUG_LEVEL=DEBUG_NONE
@@ -16,7 +16,7 @@ compiler.warning_flags.all=-Wall -Wextra -DDEBUG_LEVEL=DEBUG_ALL
 
 # compiler variables
 # ----------------------
-compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
+compiler.path={runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.c.flags=-c -g {build.flags.optimize} {compiler.warning_flags} -std=gnu11 -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} 
 compiler.c.elf.cmd=arm-none-eabi-g++

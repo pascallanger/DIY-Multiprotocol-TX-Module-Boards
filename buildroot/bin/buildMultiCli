@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-BUILDCMD="arduino-cli compile --build-properties runtime.tools.arm-none-eabi-gcc.path=${HOME}/gcc-arm-none-eabi -b $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino";
+BUILDCMD="arduino-cli compile --build-property runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 -b $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino";
 echo $BUILDCMD;
 $BUILDCMD
