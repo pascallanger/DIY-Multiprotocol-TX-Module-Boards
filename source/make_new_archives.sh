@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
+dos2unix avr/boards.txt avr/platform.txt stm32/boards.txt stm32/platform.txt
+
 AVR_VERSION=$(grep "^version=[0-9].[0-9].[0-9]" "avr/platform.txt" | awk -F = '{ print $2 }')
 STM_VERSION=$(grep "^version=[0-9].[0-9].[0-9]" "stm32/platform.txt" | awk -F = '{ print $2 }')
-
 
 echo "AVR Version: $AVR_VERSION"
 
@@ -26,7 +27,6 @@ echo "Package: package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz"
 echo "SHA256:  `(sha256sum ../archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=1 '{print $N}')`"
 echo "Size:    `(ls -al ../archives/package_multi_4in1_avr_board_v$AVR_VERSION.tar.gz | awk -v N=5 '{print $N}')`"
 echo
-
 
 echo "STM Version: $STM_VERSION"
 
