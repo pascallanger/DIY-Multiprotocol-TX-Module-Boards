@@ -38,7 +38,7 @@ jobs:
     # Set the environment variables
     env:
       BOARD: ${{ matrix.board }}
-      IDE_VERSION: 1.8.9
+      IDE_VERSION: 1.8.13
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
