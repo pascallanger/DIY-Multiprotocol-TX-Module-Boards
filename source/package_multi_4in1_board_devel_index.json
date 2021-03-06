@@ -642,10 +642,10 @@
         "help": {
           "online": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module"
         },
-        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_stm32_board_v1.2.2.tar.gz",
-        "archiveFileName": "package_multi_4in1_stm32_board_v1.2.2.tar.gz",
-        "checksum": "SHA-256:0fe4a8899438bbc31dc37714acca13968e43d75a47e59143343d83b634d2e47d",
-        "size": "7485662",
+        "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_stm32_board_v1.3.0.tar.gz",
+        "archiveFileName": "package_multi_4in1_stm32_board_v1.3.0.tar.gz",
+        "checksum": "SHA-256:75a9b9650a1b4b02feb66a33a2f43f555c05e2cb47d98c0254da509b000faec5",
+        "size": "7491012",
         "boards": [
           {"name": "Multi X-in-1 STM32F103CB (128KB)"},
           {"name": "Multi X-in-1 STM32F103C8 (64KB)"},
@@ -692,22 +692,22 @@
             "host": "x86_64-apple-darwin",
             "url": "https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v8.3.1-1.4/xpack-arm-none-eabi-gcc-8.3.1-1.4-darwin-x64.tar.gz",
             "archiveFileName": "xpack-arm-none-eabi-gcc-8.3.1-1.4-darwin-x64.tar.gz",
-            "checksum": "SHA-256:6ff68117083624273c56244cf4242989a65069b376a9727ec4a230be824340f3",
-            "size": "132371371"
+            "checksum": "SHA-256:03ab76e2518748d12b491cb2ca8044633c56291db04933f0c3110637bfa22698",
+            "size": "119375917"
           },
           {
             "host": "x86_64-pc-linux-gnu",
             "url": "https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v8.3.1-1.4/xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x64.tar.gz",
             "archiveFileName": "xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x64.tar.gz",
-            "checksum": "SHA-256:bbde117b97f229dfe63721c0323c3da6839e83cf302c8f4ff25e0f36ecf7a428",
-            "size": "135081450"
+            "checksum": "SHA-256:31338c3b8bdb32d9082a857f6d65a57c033e7d6eba1662a30c7fb3e83ff46597",
+            "size": "123594584"
           },
           {
             "host": "i686-pc-linux-gnu",
             "url": "https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v8.3.1-1.4/xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x32.tar.gz",
             "archiveFileName": "xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x32.tar.gz",
-            "checksum": "SHA-256:e9f4b5f3ebe7e4391e2423e4106493d7cfcdee9eee4a1f0766f1c23662093a49",
-            "size": "137429272"
+            "checksum": "SHA-256:f69a86a11be77c9a0c9b750444fe12d7c84539ed1ff9600f60e1583509c6c28b",
+            "size": "125899065"
           }
         ]
       }
