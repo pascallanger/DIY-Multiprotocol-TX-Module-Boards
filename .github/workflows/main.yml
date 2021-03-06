@@ -117,6 +117,11 @@ jobs:
             opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
           fi
 
+          # Disable PPM for the STM32 builds where serial and PPM don't fit together
+          if [[ "$BOARD" == "multi4in1:stm32f1:multistm32f103cb:debug_option=none" ]] || [[ "$BOARD" == "multi4in1:stm32f1:multi5in1t18int" ]]; then
+            opt_disable ENABLE_PPM;
+          fi
+
       - name: Configuration diff
         run: |
           pushd DIY-Multiprotocol-TX-Module/
