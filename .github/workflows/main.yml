@@ -64,7 +64,7 @@ jobs:
           fi
 
           if [[ "$BOARD" =~ "multi4in1:stm32f1:" ]]; then
-            wget https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v8.3.1-1.4/xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x64.tar.gz
+            wget --no-verbose https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v8.3.1-1.4/xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x64.tar.gz
             tar xzf xpack-arm-none-eabi-gcc-8.3.1-1.4-linux-x64.tar.gz
             mv xpack-arm-none-eabi-gcc-8.3.1-1.4 $HOME/xpack-arm-none-eabi-gcc-8.3.1-1.4
           fi
