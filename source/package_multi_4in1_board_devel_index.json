@@ -667,8 +667,8 @@
         },
         "url": "https://github.com/pascallanger/DIY-Multiprotocol-TX-Module-Boards/raw/devel/archives/package_multi_4in1_stm32_board_v1.3.1.tar.gz",
         "archiveFileName": "package_multi_4in1_stm32_board_v1.3.1.tar.gz",
-        "checksum": "SHA-256:60e57528743f500c7078a477445b7b0d0ea20225f0aebdb54bb4ee521ab63bf7",
-        "size": "7491011",
+        "checksum": "SHA-256:1b95420a2db6e780329e8090ce50fa1a1c36058d21f0492743d5d32908ffece3",
+        "size": "7493815",
         "boards": [
           {"name": "Multi X-in-1 STM32F103CB (128KB)"},
           {"name": "Multi X-in-1 STM32F103C8 (64KB)"},
