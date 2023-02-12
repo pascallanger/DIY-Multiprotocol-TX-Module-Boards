@@ -39,6 +39,7 @@ jobs:
     env:
       BOARD: ${{ matrix.board }}
       IDE_VERSION: 1.8.19
+      IDE_VERSION_2: 2.0.3
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -49,13 +50,18 @@ jobs:
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
       
-      - name: Install Arduino IDE
+      - name: Install Arduino IDE v1
         run: | 
           wget -nv http://downloads.arduino.cc/arduino-$IDE_VERSION-linux64.tar.xz
           tar xf arduino-$IDE_VERSION-linux64.tar.xz
-          mv arduino-$IDE_VERSION $HOME/arduino-ide
-          echo "$HOME/arduino-ide" >> $GITHUB_PATH
-      
+          mv arduino-$IDE_VERSION $HOME/arduino-ide-v1
+
+      - name: Install Arduino IDE v2
+        run: | 
+          wget -nv https://downloads.arduino.cc/arduino-ide/arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip
+          unzip -q arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip
+          mv arduino-ide_${IDE_VERSION_2}_Linux_64bit $HOME/arduino-ide-v2
+
       - name: Configure Build Environment
         run: |
           arduino-cli core update-index
@@ -129,7 +135,10 @@ jobs:
           popd
         
       - name: Arduino CLI Build
-        run: buildMultiCli
+        run: (set -x; arduino-cli compile --build-property runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 -b $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino)
 
-      - name: Arduino IDE Build
-        run: buildMulti
+      - name: Arduino IDE v1 Build
+        run: (set -x; $HOME/arduino-ide-v1/arduino --pref runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 --verify --board $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino")
+
+      - name: Arduino IDE v2 Build
+        run: (set -x; $HOME/arduino-ide-v2/arduino --pref runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 --verify --board $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino")
