@@ -87,7 +87,21 @@ if [ $DEBUG == true ]; then
         echo "Multi Version: $MULTI_VERSION"
 fi
 
-PREPROC_PATH="$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp"
+# Find the Arduino IDE CPP preprocessor file
+if [ -f "$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp" ]; then
+        PREPROC_PATH="$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp"
+fi
+
+# Newer Arduino CLIs generate a different file, so check for that as well
+if [ -f "$BUILD_PATH/Multiprotocol.ino.map" ]; then
+        PREPROC_PATH="$BUILD_PATH/Multiprotocol.ino.map"
+fi
+
+# Error if we couldn't find the file
+if [ -z "$PREPROC_PATH" ]; then
+        echo "ERROR: Unable to determine firmware version and options."
+        exit 1
+fi
 
 # Find the channel order
 SIG_CHANNEL_ORDER=11111
