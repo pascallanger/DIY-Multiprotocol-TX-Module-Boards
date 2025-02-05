@@ -112,15 +112,11 @@ jobs:
             opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
           fi
 
-          # Trim the enabled protocols down for the STM32F103CB board with debugging or the STM32F103C8 board in general
-          if [[ "$BOARD" == "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi" ]] || [[ "$BOARD" == "multi4in1:stm32f1:multistm32f103cb:debug_option=native" ]] || [[ "$BOARD" =~ "multi4in1:stm32f1:multistm32f103c8" ]]; then
+          # Disable PPM and trim the enabled protocols down for the STM32 boards
+          if [[ "$BOARD" =~ "multi4in1:stm32f1:multistm32f1" ]]; then
+            opt_disable ENABLE_PPM;  
             opt_disable $ALL_PROTOCOLS;
             opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
-          fi
-
-          # Disable PPM for the STM32 builds where serial and PPM don't fit together
-          if [[ "$BOARD" == "multi4in1:stm32f1:multistm32f103cb:debug_option=none" ]] || [[ "$BOARD" == "multi4in1:stm32f1:multi5in1t18int" ]]; then
-            opt_disable ENABLE_PPM;
           fi
 
       - name: Configuration diff
