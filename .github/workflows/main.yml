@@ -113,7 +113,7 @@ jobs:
           fi
 
           # Disable PPM and trim the enabled protocols down for the STM32 boards
-          if [[ "$BOARD" =~ "multi4in1:stm32f1:multistm32f1" ]]; then
+          if [[ "$BOARD" =~ "multi4in1:stm32f1:multi5in1t18int" ]] || [[ "$BOARD" =~ "multi4in1:stm32f1:multistm32f103" ]]; then
             opt_disable ENABLE_PPM;  
             opt_disable $ALL_PROTOCOLS;
             opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
