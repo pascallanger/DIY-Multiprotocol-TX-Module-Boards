@@ -32,6 +32,7 @@ jobs:
           "multi4in1:stm32f1:multistm32f103cb:debug_option=none", 
           "multi4in1:stm32f1:multistm32f103cb:debug_option=native", 
           "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi", 
+          "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi_int",
           "multi4in1:stm32f1:multistm32f103c8:debug_option=none"
         ]
 
