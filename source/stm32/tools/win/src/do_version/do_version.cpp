@@ -245,10 +245,18 @@ int main(int argc, char *argv[])
 	}
 
 	// Path to the preproc file
-	string preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
+	string preprocPath;
+	if (!filesystem::exists(buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp")) {
+		preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
+	}
 
-	// Error if the source file doesn't exist
-	if (!filesystem::exists(preprocPath)) {
+	// Alternate preproc file path for newer versions of the Arduino CLI
+	if (!filesystem::exists(buildPath + "\\Multiprotocol.ino.map")) {
+		preprocPath = buildPath + "\\Multiprotocol.ino.map";
+	}
+
+	// Error if the preproc file doesn't exist
+	if (preprocPath.empty() || !filesystem::exists(preprocPath)) {
 		fprintf(stdout, "ERROR: %s does not exist\n", preprocPath.c_str());
 		return -1;
 	}
