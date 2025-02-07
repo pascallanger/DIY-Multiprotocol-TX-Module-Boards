@@ -27,22 +27,31 @@ jobs:
         include:
           - board: "multi4in1:avr:multiatmega328p:bootloader=none"
             name: "ATmega328p"
+            file: "atmega328-no-boot"
           - board: "multi4in1:avr:multiatmega328p:bootloader=optiboot"
             name: "ATmega328p (Optiboot)"
+            file: "atmega328-optiboot"
           - board: "multi4in1:avr:multixmega32d4"
             name: "OrangeRX"
+            file: "orangerx"
           - board: "multi4in1:stm32f1:multi5in1t18int"
             name: "T18 5-in-1 (128KB)"
+            file: "t18-5in1"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=none"
             name: "STM32F103 (128KB)"
+            file: "stm32f103cb"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=native"
             name: "STM32F103 (128KB, Native Debug)"
+            file: "stm32f103cb-usb-debug"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi"
             name: "STM32F103 (128KB, FTDI Debug)"
+            file: "stm32f103cb-ftdi-debug"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi_int"
             name: "STM32F103 (128KB, Int. FTDI Debug)"
+            file: "stm32f103cb-int-ftdi-debug"
           - board: "multi4in1:stm32f1:multistm32f103c8:debug_option=none"
             name: "STM32F103 (64KB)"
+            file: "stm32f103c8"
 
     # Set the build name using the friendly board name
     name: "[Build] ${{ matrix.name }}"
@@ -90,6 +99,8 @@ jobs:
           
           chmod +x ${GITHUB_WORKSPACE}/buildroot/bin/*
           echo "${GITHUB_WORKSPACE}/buildroot/bin" >> $GITHUB_PATH
+
+          mkdir ./binaries
           
       - name: Clone MULTI-Module firmware source
         run: git clone https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git
@@ -137,7 +148,31 @@ jobs:
           popd
         
       - name: Arduino CLI Build
-        run: buildMultiCli
+        run: |
+          rm -rf ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          buildMultiCli
+          ls -al ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          cp ls -al ${GITHUB_WORKSPACE}/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
 
       - name: Arduino IDE Build
-        run: buildMulti
+        run: |
+          rm -rf ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          buildMulti
+          ls -al ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          cp ls -al ${GITHUB_WORKSPACE}/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
+
+      - name: Check for artifacts
+        run: |
+          NUM_FILES=$(ls -l ./binaries | grep ^- | wc -l);
+          if [ $NUM_FILES -gt 0 ]; then 
+            echo "HAVE_FILES=true" >> $GITHUB_ENV
+          else
+            echo "HAVE_FILES=false" >> $GITHUB_ENV
+          fi
+
+      - name: Upload Artifacts
+        if: env.HAVE_FILES == 'true'
+        uses: actions/upload-artifact/@v4
+        with:
+          name: multi-${{ matrix.file }}
+          path: ./binaries/
