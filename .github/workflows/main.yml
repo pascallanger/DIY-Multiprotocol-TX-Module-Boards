@@ -149,17 +149,17 @@ jobs:
         
       - name: Arduino CLI Build
         run: |
-          rm -rf ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
           buildMultiCli
           ls -al ${GITHUB_WORKSPACE}/Multiprotocol/
-          #cp ls -al ${GITHUB_WORKSPACE}/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
+          #cp ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
 
       - name: Arduino IDE Build
         run: |
-          rm -rf ${GITHUB_WORKSPACE}/Multiprotocol/*.bin
+          rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
           buildMulti
-          ls -al ${GITHUB_WORKSPACE}/Multiprotocol/
-          #cp ls -al ${GITHUB_WORKSPACE}/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
+          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/
+          #cp ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
 
       - name: Check for artifacts
         run: |
