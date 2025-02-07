@@ -87,12 +87,7 @@ if [ $DEBUG == true ]; then
         echo "Multi Version: $MULTI_VERSION"
 fi
 
-# Find the Arduino IDE CPP preprocessor file
-if [ -f "$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp" ]; then
-        PREPROC_PATH="$BUILD_PATH/preproc/ctags_target_for_gcc_minus_e.cpp"
-fi
-
-# Newer Arduino CLIs generate a different file, so check for that as well
+# Find the compiler map file
 if [ -f "$BUILD_PATH/Multiprotocol.ino.map" ]; then
         PREPROC_PATH="$BUILD_PATH/Multiprotocol.ino.map"
 fi

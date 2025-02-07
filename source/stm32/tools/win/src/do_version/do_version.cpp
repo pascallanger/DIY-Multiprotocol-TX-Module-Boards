@@ -10,6 +10,7 @@
 #include <regex>
 
 using namespace std;
+bool debug = false;
 
 string ReplaceAll(string str, const string& from, const string& to) {
 	size_t start_pos = 0;
@@ -26,7 +27,7 @@ int FirmwareFlag(string flag, string path)
 	bool found = false;
 
 	// Regex to find the flag line
-	regex optionRegex ("^[ \t]*bool[ \t]+firmwareFlag_" + flag + ".*$");
+	regex optionRegex ("^firmwareFlag_" + flag + ".*$");
 	
 	smatch m;
 
@@ -52,7 +53,7 @@ string FirmwareChannelOrder(string path)
 	string result = "";
 
 	// Regex to find the channel order flag line
-	regex optionRegex("^[ \t]*bool[ \t]+firmwareFlag_ChannelOrder_([A-Z]{4}).*$");
+	regex optionRegex("^firmwareFlag_ChannelOrder_([A-Z]{4}).*$");
 
 	smatch m;
 
@@ -68,7 +69,7 @@ string FirmwareChannelOrder(string path)
 			found = true;
 		}
 	}
-
+	
 	return result;
 }
 
@@ -245,19 +246,11 @@ int main(int argc, char *argv[])
 	}
 
 	// Path to the preproc file
-	string preprocPath;
-	if (!filesystem::exists(buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp")) {
-		preprocPath = buildPath + "\\preproc\\ctags_target_for_gcc_minus_e.cpp";
-	}
-
-	// Alternate preproc file path for newer versions of the Arduino CLI
-	if (!filesystem::exists(buildPath + "\\Multiprotocol.ino.map")) {
-		preprocPath = buildPath + "\\Multiprotocol.ino.map";
-	}
+	string preprocPath = buildPath + "\\Multiprotocol.ino.map";
 
 	// Error if the preproc file doesn't exist
-	if (preprocPath.empty() || !filesystem::exists(preprocPath)) {
-		fprintf(stdout, "ERROR: %s does not exist\n", preprocPath.c_str());
+	if (!filesystem::exists(preprocPath)) {
+		fprintf(stdout, "ERROR: Map file %s not found\n", preprocPath.c_str());
 		return -1;
 	}
 
@@ -275,11 +268,17 @@ int main(int argc, char *argv[])
 	// The concatenated version number string
 	string multiVersion = versionMajor + "." + versionMinor + "." + versionRevision + "." + versionPatch;
 
-	// fprintf(stdout, "Firmware version: %s\n", multiVersion.c_str());
+	if (debug) {
+		fprintf(stdout, "Firmware version:     %s\n", multiVersion.c_str());
+	}
 
 	// Get the channel order as a bit string
 	string channelOrderString = FirmwareChannelOrder(preprocPath);
 	string channelOrderBits = ChannelOrderToBits(channelOrderString);
+
+	if (debug) {
+		fprintf(stdout, "Channel order:        %s\n", channelOrderString.c_str());
+	}
 
 	// Binary values the for config lines we're interested in
 	int checkForBootloader = FirmwareFlag("CHECK_FOR_BOOTLOADER", preprocPath);
@@ -287,6 +286,14 @@ int main(int argc, char *argv[])
 	int multiStatus = FirmwareFlag("MULTI_STATUS", preprocPath);
 	int multiTelemetry = FirmwareFlag("MULTI_TELEMETRY", preprocPath);
 	int debugSerial = FirmwareFlag("DEBUG_SERIAL", preprocPath);
+
+	if (debug) {
+		fprintf(stdout, "Check for Bootloader: %d\n", checkForBootloader);
+		fprintf(stdout, "Invert Telemetry:     %d\n", invertTelemetry);
+		fprintf(stdout, "Multi Status:         %d\n", multiStatus);
+		fprintf(stdout, "Multi Telemetry:      %d\n", multiTelemetry);
+		fprintf(stdout, "Serial Debug:         %d\n", debugSerial);
+	}
 
 	string bootloaderSupport = "0";
 	if (multiBoard.find("MULTI_FLASH_FROM_TX=") == 0 || multiBoard.find("MULTI_STM32_WITH_BOOT=") == 0)
