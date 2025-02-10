@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-BUILDCMD="arduino --pref runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 --pref build.path=./build/ --verify --board $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino";
+BUILDCMD="${HOME}/arduino-ide/arduino --pref runtime.tools.xpack-arm-none-eabi-gcc-8.3.1-1.4.path=${HOME}/xpack-arm-none-eabi-gcc-8.3.1-1.4 --pref build.path=./build/ --verify --board $BOARD ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino";
 echo $BUILDCMD;
 $BUILDCMD
