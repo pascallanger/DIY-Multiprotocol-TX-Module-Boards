@@ -151,14 +151,16 @@ jobs:
         run: |
           rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
           buildMultiCli
-          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
-          cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
+          ls -al ${GITHUB_WORKSPACE}/
+          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module
+          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/
+          #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
 
       - name: Arduino IDE Build
         run: |
           rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
           buildMulti
-          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+          #ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
           #ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/
           #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
 
