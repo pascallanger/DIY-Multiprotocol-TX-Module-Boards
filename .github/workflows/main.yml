@@ -100,6 +100,7 @@ jobs:
           chmod +x ${GITHUB_WORKSPACE}/buildroot/bin/*
           echo "${GITHUB_WORKSPACE}/buildroot/bin" >> $GITHUB_PATH
 
+          mkdir ./build
           mkdir ./binaries
           
       - name: Clone MULTI-Module firmware source
@@ -149,19 +150,16 @@ jobs:
         
       - name: Arduino CLI Build
         run: |
-          rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
+          rm -rf ./build/*.bin
           buildMultiCli
-          ls -al ${GITHUB_WORKSPACE}/
-          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module
-          ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/
+          ls -al ./build/*.bin
           #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
 
       - name: Arduino IDE Build
         run: |
-          rm -rf ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol/*.bin
+          rm -rf ./build/*.bin
           buildMulti
-          #ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
-          #ls -al ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/
+          ls -al ./build/*.bin
           #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
 
       - name: Check for artifacts
