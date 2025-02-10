@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -177,3 +177,16 @@ jobs:
         with:
           name: multi-${{ matrix.file }}
           path: ./binaries/
+
+  zip:
+    name: "[Zip] Attach Build Artifacts"
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Combine and upload test artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: multi-boards-test-build
+          pattern: multi-*
+          delete-merged: true
+          retention-days: 90
