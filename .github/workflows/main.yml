@@ -81,7 +81,7 @@ jobs:
       - name: Install Arduino IDE v2
         run: | 
           wget -nv https://downloads.arduino.cc/arduino-ide/arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip
-          unzip arduino-ide_${IDE_VERSION_2_Linux_64bit.zip -d $HOME/arduino-ide-2
+          unzip arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip -d $HOME/arduino-ide-2
           ls -al $HOME/arduino-ide-2
       
       - name: Configure Build Environment
