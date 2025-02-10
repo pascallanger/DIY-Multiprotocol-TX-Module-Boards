@@ -80,13 +80,14 @@ jobs:
 
       - name: Install Arduino IDE v2
         run: | 
-          wget -nv https://downloads.arduino.cc/arduino-ide/arduino-ide_${$IDE_VERSION_2}_Linux_64bit.zip
-          unzip arduino-ide_${$IDE_VERSION_2_Linux_64bit.zip -d $HOME/arduino-ide-2
+          wget -nv https://downloads.arduino.cc/arduino-ide/arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip
+          unzip arduino-ide_${IDE_VERSION_2_Linux_64bit.zip -d $HOME/arduino-ide-2
+          ls -al $HOME/arduino-ide-2
       
       - name: Configure Build Environment
         run: |
           apt install -y libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libgbm1
-          
+
           arduino-cli core update-index
           if [[ "$BOARD" =~ "multi4in1:avr:" ]]; then
             arduino-cli core install arduino:avr;
