@@ -68,6 +68,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
+      - name: Install prerequisite packages
+        run: sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libgbm1
+
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
       
@@ -86,9 +89,8 @@ jobs:
       
       - name: Configure Build Environment
         run: |
-          apt install -y libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libgbm1
-
           arduino-cli core update-index
+
           if [[ "$BOARD" =~ "multi4in1:avr:" ]]; then
             arduino-cli core install arduino:avr;
           fi
