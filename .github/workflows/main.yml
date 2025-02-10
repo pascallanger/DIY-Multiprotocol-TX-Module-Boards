@@ -153,14 +153,14 @@ jobs:
           rm -rf ./build/*.bin
           buildMultiCli
           ls -al ./build/*.bin
-          #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
+          cp ./build/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-cli.bin
 
       - name: Arduino IDE Build
         run: |
           rm -rf ./build/*.bin
           buildMulti
           ls -al ./build/*.bin
-          #cp ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
+          cp ./build/Multiprotocol.ino.bin ./binaries/multi-${{ matrix.file }}-ide.bin
 
       - name: Check for artifacts
         run: |
