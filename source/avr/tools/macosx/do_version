@@ -87,7 +87,12 @@ if [ $DEBUG == true ]; then
         echo "Multi Version: $MULTI_VERSION"
 fi
 
-# Find the compiler map file
+# Find the AVR compiler map file
+if [ -f "$BUILD_PATH/Multiprotocol.ino.cpp.o" ]; then
+        PREPROC_PATH="$BUILD_PATH/Multiprotocol.ino.cpp.o"
+fi
+
+# Find the STM32 compiler map file
 if [ -f "$BUILD_PATH/Multiprotocol.ino.map" ]; then
         PREPROC_PATH="$BUILD_PATH/Multiprotocol.ino.map"
 fi

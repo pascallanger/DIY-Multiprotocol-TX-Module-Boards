@@ -24,7 +24,6 @@ string ReplaceAll(string str, const string& from, const string& to) {
 int FirmwareFlag(string flag, string path)
 {
 	int result = 0;
-	bool found = false;
 
 	// Regex to find the flag line
 	regex optionRegex ("^firmwareFlag_" + flag + ".*$");
@@ -32,44 +31,39 @@ int FirmwareFlag(string flag, string path)
 	smatch m;
 
 	// Stream for the file
-	ifstream file(path);
+	ifstream file(path, std::ios::binary);
 
-	// Iterate through the file to find the flag we're interested in
-	string line;
-	while (getline(file, line) && !found) {
-		
-		if (regex_search(line, m, optionRegex)) {
-			result = 1;
-			found = true;
-		}
+	// Search for the flag
+	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	size_t pos = str.find("firmwareFlag_" + flag);
+
+	// Return 1 if the flag is found, 0 otherwise
+	if (pos != string::npos) {
+		result = 1;
 	}
-
 	return result;
 }
 
 string FirmwareChannelOrder(string path)
 {
-	bool found = false;
 	string result = "";
 
-	// Regex to find the channel order flag line
-	regex optionRegex("^firmwareFlag_ChannelOrder_([A-Z]{4}).*$");
-
-	smatch m;
-
 	// Stream for the file
-	ifstream file(path);
+	ifstream file(path, std::ios::binary);
 
-	// Iterate through the file to find the flag we're interested in
-	string line;
-	while (getline(file, line) && !found) {
+	// Search for the flag
+    std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	size_t pos = str.find("firmwareFlag_ChannelOrder_");
 
-		if (regex_search(line, m, optionRegex)) {
-			result = m[1];
-			found = true;
-		}
+	// Return the channel order string
+	if (pos != string::npos) {
+		result = str.substr(pos + 26, 4);
 	}
-	
+	else
+	{
+		fprintf(stderr, "ERROR: Unable to find channel order\n");
+	}
+
 	return result;
 }
 
@@ -245,12 +239,12 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	// Path to the preproc file
-	string preprocPath = buildPath + "\\Multiprotocol.ino.map";
+	// Path to the object file
+	string preprocPath = buildPath + "\\sketch\\Multiprotocol.ino.cpp.o";
 
 	// Error if the preproc file doesn't exist
 	if (!filesystem::exists(preprocPath)) {
-		fprintf(stdout, "ERROR: Map file %s not found\n", preprocPath.c_str());
+		fprintf(stdout, "ERROR: Object file %s not found\n", preprocPath.c_str());
 		return -1;
 	}
 
@@ -274,6 +268,10 @@ int main(int argc, char *argv[])
 
 	// Get the channel order as a bit string
 	string channelOrderString = FirmwareChannelOrder(preprocPath);
+	if (channelOrderString == "") {
+		return -1;
+	}
+		
 	string channelOrderBits = ChannelOrderToBits(channelOrderString);
 
 	if (debug) {

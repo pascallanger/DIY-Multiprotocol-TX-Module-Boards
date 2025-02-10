@@ -66,11 +66,11 @@ ChannelOrderBitsFromString()
 }
 
 if [ $DEBUG == true ]; then 
-        echo "Build Path: $BUILD_PATH";
-        echo "Sketch Path: $SKETCH_PATH";
-        echo "Project Name: $PROJECT_NAME";
-        echo "Multi Board: $MULTI_BOARD";
-        echo "Multi Board Type: $MULTI_TYPE";
+        echo "Build Path:             $BUILD_PATH";
+        echo "Sketch Path:            $SKETCH_PATH";
+        echo "Project Name:           $PROJECT_NAME";
+        echo "Multi Board:            $MULTI_BOARD";
+        echo "Multi Board Type:       $MULTI_TYPE";
 fi
 
 if [ -e "$BUILD_PATH/sketch/Multiprotocol.h" ]; then
@@ -84,12 +84,12 @@ else
 fi
 
 if [ $DEBUG == true ]; then
-        echo "Multi Version: $MULTI_VERSION"
+        echo "Multi Version:          $MULTI_VERSION"
 fi
 
-# Find the compiler map file
-if [ -f "$BUILD_PATH/Multiprotocol.ino.map" ]; then
-        PREPROC_PATH="$BUILD_PATH/Multiprotocol.ino.map"
+# Find the object file
+if [ -f "$BUILD_PATH/sketch/Multiprotocol.ino.cpp.o" ]; then
+        PREPROC_PATH="$BUILD_PATH/sketch/Multiprotocol.ino.cpp.o"
 fi
 
 # Error if we couldn't find the file
@@ -99,19 +99,26 @@ if [ -z "$PREPROC_PATH" ]; then
 fi
 
 # Find the channel order
-SIG_CHANNEL_ORDER=11111
-grep -q firmwareFlag_ChannelOrder $PREPROC_PATH
-if [ $? -eq 0 ]; then
-        CHANNEL_ORDER_LINE=$(grep firmwareFlag_ChannelOrder $PREPROC_PATH)
-        CHANNEL_ORDER_STRING=`echo "$CHANNEL_ORDER_LINE" | sed 's/.* firmwareFlag_ChannelOrder_\([AETR][AETR][AETR][AETR]\) .*/\1/'`
-        CHANNEL_ORDER_BITS=$(ChannelOrderBitsFromString)
-        if [ "x$CHANNEL_ORDER_BITS" != "x" ]; then
-                SIG_CHANNEL_ORDER=$(ChannelOrderBitsFromString)
-        fi
+CHANNEL_ORDER_LINE=$(grep -a -m1 -o 'firmwareFlag_ChannelOrder_\([AETR][AETR][AETR][AETR]\)' $PREPROC_PATH)
+CHANNEL_ORDER_STRING=`echo "$CHANNEL_ORDER_LINE" | sed 's/^firmwareFlag_ChannelOrder_\([AETR][AETR][AETR][AETR]\)$/\1/'`
+
+if [ "x$CHANNEL_ORDER_STRING" == "x" ]; then
+        echo "ERROR: Unable to determine channel order."
+        exit 1
 fi
 
 if [ $DEBUG == true ]; then
-        echo "Channel Order Bits: $SIG_CHANNEL_ORDER"
+        echo "Channel Order String:   $CHANNEL_ORDER_STRING"
+fi
+
+CHANNEL_ORDER_BITS=$(ChannelOrderBitsFromString)
+if [ "x$CHANNEL_ORDER_BITS" == "x" ]; then
+        echo "ERROR: Unable to convert channel order to bit value."
+        exit 1
+fi
+SIG_CHANNEL_ORDER=$CHANNEL_ORDER_BITS
+if [ $DEBUG == true ]; then
+        echo "Channel Order Bits:     $SIG_CHANNEL_ORDER"
 fi
 
 SIG_CHECK_FOR_BOOTLOADER=0
@@ -144,37 +151,15 @@ if [ $? -eq 0 ]; then
         SIG_DEBUG_SERIAL=1
 fi
 
-SIG_MODULE_SUB_TYPE=000
-if [ $SIG_MULTI_TYPE == 01 ]; then
-        MCU_STM32F103CB=false;
-        MCU_STM32F103C8=false;
-        MULTI_5IN1_INTERNAL=false
-
-        grep -q firmwareFlag_MCU_STM32F103CB $PREPROC_PATH
-        if [ $? -eq 0 ]; then
-                MCU_STM32F103CB=true;
-        fi
-        grep -q firmwareFlag_MCU_STM32F103C8 $PREPROC_PATH
-        if [ $? -eq 0 ]; then
-                MCU_STM32F103C8=true;
-        fi
-        grep -q firmwareFlag_MULTI_5IN1_INTERNAL $PREPROC_PATH
-        if [ $? -eq 0 ]; then
-                MULTI_5IN1_INTERNAL=true;
-        fi
-
-        if [ $MCU_STM32F103CB == true ] && [ $MULTI_5IN1_INTERNAL == false ]; then
-                SIG_MODULE_SUB_TYPE=000;
-        fi
-        if [ $MCU_STM32F103C8 == true ]; then
-                SIG_MODULE_SUB_TYPE=001;
-        fi
-        if [ $MCU_STM32F103CB == true ] && [ $MULTI_5IN1_INTERNAL == true ]; then
-                SIG_MODULE_SUB_TYPE=010;
-        fi
+if [ $DEBUG == true ]; then
+        echo "Check for Bootloader:   $SIG_CHECK_FOR_BOOTLOADER"
+        echo "Invert Telemetry:       $SIG_INVERT_TELEMETRY"
+        echo "MULTI Status:           $SIG_MULTI_STATUS"
+        echo "Multi Telemetry:        $SIG_MULTI_TELEMETRY"
+        echo "Serial Debug:           $SIG_DEBUG_SERIAL"
 fi
 
-MULTI_SIG_FLAGS_BIN=$SIG_MODULE_SUB_TYPE$SIG_DEBUG_SERIAL$SIG_MULTI_TELEMETRY$SIG_MULTI_STATUS$SIG_INVERT_TELEMETRY$SIG_CHECK_FOR_BOOTLOADER$SIG_BOOTLOADER_SUPPORT$SIG_CHANNEL_ORDER$SIG_MULTI_TYPE
+MULTI_SIG_FLAGS_BIN=$SIG_DEBUG_SERIAL$SIG_MULTI_TELEMETRY$SIG_MULTI_STATUS$SIG_INVERT_TELEMETRY$SIG_CHECK_FOR_BOOTLOADER$SIG_BOOTLOADER_SUPPORT$SIG_CHANNEL_ORDER$SIG_MULTI_TYPE
 MULTI_SIG_FLAGS_HEX=$(printf "%08x" $((2#$MULTI_SIG_FLAGS_BIN)))
 
 if [ $DEBUG == true ]; then
@@ -186,7 +171,7 @@ MULTI_SIG_VERSION=$(printf "%02d%02d%02d%02d" $MAJOR_VERSION $MINOR_VERSION $REV
 MULTI_SIG="multi-x$MULTI_SIG_FLAGS_HEX-$MULTI_SIG_VERSION"
 
 if [ $DEBUG == true ]; then
-        echo "Multi Signature: $MULTI_SIG"
+        echo "Multi Signature:        $MULTI_SIG"
 fi
 
 # Don't re-write the signature if it's already there
