@@ -68,24 +68,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: Install prerequisite packages
-        run: sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libgbm1
-
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
       
-      - name: Install Arduino IDE v1
+      - name: Install Arduino IDE
         run: | 
           wget -nv https://downloads.arduino.cc/arduino-$IDE_VERSION-linux64.tar.xz
           tar xf arduino-$IDE_VERSION-linux64.tar.xz
           mv arduino-$IDE_VERSION $HOME/arduino-ide
           echo "$HOME/arduino-ide" >> $GITHUB_PATH
-
-      - name: Install Arduino IDE v2
-        run: | 
-          wget -nv https://downloads.arduino.cc/arduino-ide/arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip
-          unzip arduino-ide_${IDE_VERSION_2}_Linux_64bit.zip -d $HOME/arduino-ide-2
-          ls -al $HOME/arduino-ide-2
       
       - name: Configure Build Environment
         run: |
