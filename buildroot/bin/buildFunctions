@@ -1,0 +1,10 @@
+#!/bin/bash
+
+getMultiVersion() {
+    MAJOR_VERSION=$(grep "VERSION_MAJOR" "DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+    MINOR_VERSION=$(grep "VERSION_MINOR" "DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+    REVISION_VERSION=$(grep "VERSION_REVISION" "DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+    PATCH_VERSION=$(grep "VERSION_PATCH" "DIY-Multiprotocol-TX-Module/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+    MULTI_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION
+    MULTI_SIG_VERSION=$(printf "%02d%02d%02d%02d" $MAJOR_VERSION $MINOR_VERSION $REVISION_VERSION $PATCH_VERSION)
+}
