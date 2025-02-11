@@ -118,6 +118,9 @@ jobs:
 
       - name: Configure MULTI-Module firmware options
         run: |
+          # Load the build functions
+          source ./buildroot/bin/buildFunctions; 
+          
           # Get the version
           getMultiVersion
           echo "MULTI_VERSION=$(echo $MULTI_VERSION)" >> $GITHUB_ENV
