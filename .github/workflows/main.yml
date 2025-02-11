@@ -60,7 +60,6 @@ jobs:
     env:
       BOARD: ${{ matrix.board }}
       IDE_VERSION: 1.8.19
-      IDE_VERSION_2: 2.3.4
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
