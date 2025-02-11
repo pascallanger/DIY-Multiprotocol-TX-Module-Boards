@@ -28,39 +28,39 @@ jobs:
           - board: "multi4in1:avr:multiatmega328p:bootloader=none"
             name: "ATmega328p"
             file: "atmega328-no-boot"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000a00"
           - board: "multi4in1:avr:multiatmega328p:bootloader=optiboot"
             name: "ATmega328p (Optiboot)"
             file: "atmega328-optiboot"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000b80"
           - board: "multi4in1:avr:multixmega32d4"
             name: "OrangeRX"
             file: "orangerx"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000b02"
           - board: "multi4in1:stm32f1:multi5in1t18int"
             name: "T18 5-in-1 (128KB)"
             file: "t18-5in1"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000b81"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=none"
             name: "STM32F103 (128KB)"
             file: "stm32f103cb"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000b81"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=native"
             name: "STM32F103 (128KB, Native Debug)"
             file: "stm32f103cb-usb-debug"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00001b81"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi"
             name: "STM32F103 (128KB, FTDI Debug)"
             file: "stm32f103cb-ftdi-debug"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00001b01"
           - board: "multi4in1:stm32f1:multistm32f103cb:debug_option=ftdi_int"
             name: "STM32F103 (128KB, Int. FTDI Debug)"
             file: "stm32f103cb-int-ftdi-debug"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00001b81"
           - board: "multi4in1:stm32f1:multistm32f103c8:debug_option=none"
             name: "STM32F103 (64KB)"
             file: "stm32f103c8"
-            expected-sig: "multi-x00000000-"
+            expected-sig: "multi-x00000b81"
 
     # Set the build name using the friendly board name
     name: "[Build] ${{ matrix.name }}"
@@ -120,7 +120,7 @@ jobs:
         run: |
           # Load the build functions
           source ./buildroot/bin/buildFunctions; 
-          
+
           # Get the version
           getMultiVersion
           echo "MULTI_VERSION=$(echo $MULTI_VERSION)" >> $GITHUB_ENV
@@ -175,7 +175,7 @@ jobs:
           EXPECTED_SIG="${{ matrix.expected-sig }}-${MULTI_SIG_VERSION}"
           BIN_SIG=$(grep -a -o "\(multi-x[a-f0-9]\{8\}-[0-9]\{8\}\)" ./build/Multiprotocol.ino.bin)
           if [[ "$BIN_SIG" != "$EXPECTED_SIG" ]]; then
-            echo "Firmware signature mismatch: expected $EXPECTED_SIG, got $BIN_SIG"
+            echo -e "\nERROR: Firmware signature mismatch: expected $EXPECTED_SIG, got $BIN_SIG\n"
             exit 1
           fi
 
@@ -188,7 +188,7 @@ jobs:
           EXPECTED_SIG="${{ matrix.expected-sig }}-${MULTI_SIG_VERSION}"
           BIN_SIG=$(grep -a -o "\(multi-x[a-f0-9]\{8\}-[0-9]\{8\}\)" ./build/Multiprotocol.ino.bin)
           if [[ "$BIN_SIG" != "$EXPECTED_SIG" ]]; then
-            echo "Firmware signature mismatch: expected $EXPECTED_SIG, got $BIN_SIG"
+            echo -e "\nERROR: Firmware signature mismatch: expected $EXPECTED_SIG, got $BIN_SIG\n"
             exit 1
           fi
 
